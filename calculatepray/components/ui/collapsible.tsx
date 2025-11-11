@@ -19,30 +19,42 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
-  const [isOpen, setIsOpen] = useState(false);
+export function Collapsible({ children, title, isOpen, onToggle }: PropsWithChildren & {
+  title: string;
+  isOpen?: boolean;
+  onToggle?: () => void;
+}) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const theme = useColorScheme() ?? 'light';
+
+  const open = isOpen !== undefined ? isOpen : internalIsOpen;
+
+  const handlePress = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    if (onToggle) {
+      onToggle();
+    } else {
+      setInternalIsOpen((value) => !value);
+    }
+  };
 
   return (
     <ThemedView>
       <TouchableOpacity
         style={[styles.heading, theme === 'light' ? styles.headingLight : styles.headingDark]}
-        onPress={() => {
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-          setIsOpen((value) => !value);
-        }}
+        onPress={handlePress}
         activeOpacity={0.8}>
         <IconSymbol
           name="chevron.right"
           size={18}
           weight="medium"
           color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}
-          style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
+          style={{ transform: [{ rotate: open ? '90deg' : '0deg' }] }}
         />
 
         <ThemedText type="defaultSemiBold" style={styles.headingText}>{title}</ThemedText>
       </TouchableOpacity>
-      {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}
+      {open && <ThemedView style={styles.content}>{children}</ThemedView>}
     </ThemedView>
   );
 }

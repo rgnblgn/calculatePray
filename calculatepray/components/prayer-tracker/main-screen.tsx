@@ -36,6 +36,9 @@ export default function MainScreen({ startDate, debtDate, onReset }: MainScreenP
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
 
+    // Hangi section açık?
+    const [openSection, setOpenSection] = useState<'current' | 'past' | null>(null);
+
     // Tarihler arası gün farkını hesapla
     const calculateDaysDifference = (date1: Date, date2: Date): number => {
         const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
@@ -198,7 +201,11 @@ export default function MainScreen({ startDate, debtDate, onReset }: MainScreenP
                 </View>
 
                 <View style={[styles.section, styles.sectionShadow]}>
-                    <Collapsible title={`📊 Güncel Kazalar • Toplam: ${currentTotal}`}>
+                    <Collapsible
+                        title={`📊 Güncel Kazalar • Toplam: ${currentTotal}`}
+                        isOpen={openSection === 'current'}
+                        onToggle={() => setOpenSection(openSection === 'current' ? null : 'current')}
+                    >
                         <ThemedView style={[styles.contentContainer, isDark && styles.contentContainerDark]}>
                             {PRAYERS.map((prayer, index) => renderPrayerItem(prayer, currentDebts[prayer.key as keyof PrayerCounts], 'current', index === PRAYERS.length - 1))}
                         </ThemedView>
@@ -206,7 +213,11 @@ export default function MainScreen({ startDate, debtDate, onReset }: MainScreenP
                 </View>
 
                 <View style={[styles.section, styles.sectionShadow]}>
-                    <Collapsible title={`📜 Geçmiş Kazalar • Toplam: ${pastTotal} (${daysDifference} gün)`}>
+                    <Collapsible
+                        title={`📜 Geçmiş Kazalar • Toplam: ${pastTotal} (${daysDifference} gün)`}
+                        isOpen={openSection === 'past'}
+                        onToggle={() => setOpenSection(openSection === 'past' ? null : 'past')}
+                    >
                         <ThemedView style={[styles.contentContainer, isDark && styles.contentContainerDark]}>
                             {PRAYERS.map((prayer, index) => renderPrayerItem(prayer, pastDebts[prayer.key as keyof PrayerCounts], 'past', index === PRAYERS.length - 1))}
                         </ThemedView>
@@ -243,7 +254,7 @@ const styles = StyleSheet.create({
     },
     header: {
         marginBottom: isSmallDevice ? 20 : 26,
-        marginTop: 4,
+        marginTop: isSmallDevice ? 24 : 32,
         paddingHorizontal: 8,
     },
     title: {
