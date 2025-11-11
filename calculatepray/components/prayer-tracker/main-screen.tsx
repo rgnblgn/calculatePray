@@ -185,45 +185,49 @@ export default function MainScreen({ startDate, debtDate, onReset }: MainScreenP
     );
 
     return (
-        <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-        >
-            <ThemedView style={styles.content}>
-                <View style={styles.header}>
-                    <ThemedText type="title" style={styles.title}>
-                        🕌 Namaz Takip
-                    </ThemedText>
-                    <ThemedText style={styles.subtitle}>
-                        Kaza namazlarınızı kolayca yönetin
-                    </ThemedText>
-                </View>
+        <View style={styles.container}>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.content}>
+                    <View style={styles.header}>
+                        <ThemedText type="title" style={styles.title}>
+                            🕌 Namaz Takip
+                        </ThemedText>
+                        <ThemedText style={styles.subtitle}>
+                            Kaza namazlarınızı kolayca yönetin
+                        </ThemedText>
+                    </View>
 
-                <View style={[styles.section, styles.sectionShadow]}>
-                    <Collapsible
-                        title={`📊 Güncel Kazalar • Toplam: ${currentTotal}`}
-                        isOpen={openSection === 'current'}
-                        onToggle={() => setOpenSection(openSection === 'current' ? null : 'current')}
-                    >
-                        <ThemedView style={[styles.contentContainer, isDark && styles.contentContainerDark]}>
-                            {PRAYERS.map((prayer, index) => renderPrayerItem(prayer, currentDebts[prayer.key as keyof PrayerCounts], 'current', index === PRAYERS.length - 1))}
-                        </ThemedView>
-                    </Collapsible>
-                </View>
+                    <View style={[styles.section, styles.sectionShadow]}>
+                        <Collapsible
+                            title={`📊 Güncel Kazalar • Toplam: ${currentTotal}`}
+                            isOpen={openSection === 'current'}
+                            onToggle={() => setOpenSection(openSection === 'current' ? null : 'current')}
+                        >
+                            <ThemedView style={[styles.contentContainer, isDark && styles.contentContainerDark]}>
+                                {PRAYERS.map((prayer, index) => renderPrayerItem(prayer, currentDebts[prayer.key as keyof PrayerCounts], 'current', index === PRAYERS.length - 1))}
+                            </ThemedView>
+                        </Collapsible>
+                    </View>
 
-                <View style={[styles.section, styles.sectionShadow]}>
-                    <Collapsible
-                        title={`📜 Geçmiş Kazalar • Toplam: ${pastTotal} (${daysDifference} gün)`}
-                        isOpen={openSection === 'past'}
-                        onToggle={() => setOpenSection(openSection === 'past' ? null : 'past')}
-                    >
-                        <ThemedView style={[styles.contentContainer, isDark && styles.contentContainerDark]}>
-                            {PRAYERS.map((prayer, index) => renderPrayerItem(prayer, pastDebts[prayer.key as keyof PrayerCounts], 'past', index === PRAYERS.length - 1))}
-                        </ThemedView>
-                    </Collapsible>
+                    <View style={[styles.section, styles.sectionShadow]}>
+                        <Collapsible
+                            title={`📜 Geçmiş Kazalar • Toplam: ${pastTotal}`}
+                            isOpen={openSection === 'past'}
+                            onToggle={() => setOpenSection(openSection === 'past' ? null : 'past')}
+                        >
+                            <ThemedView style={[styles.contentContainer, isDark && styles.contentContainerDark]}>
+                                {PRAYERS.map((prayer, index) => renderPrayerItem(prayer, pastDebts[prayer.key as keyof PrayerCounts], 'past', index === PRAYERS.length - 1))}
+                            </ThemedView>
+                        </Collapsible>
+                    </View>
                 </View>
+            </ScrollView>
 
+            <View style={[styles.fixedButtonContainer, isDark && styles.fixedButtonContainerDark]}>
                 <TouchableOpacity
                     style={[styles.resetButton, isDark && styles.resetButtonDark]}
                     onPress={handleResetData}
@@ -232,46 +236,52 @@ export default function MainScreen({ startDate, debtDate, onReset }: MainScreenP
                     <Ionicons name="refresh" size={20} color="#FFFFFF" style={styles.resetIcon} />
                     <ThemedText style={styles.resetButtonText}>Yeni Tarih Gir</ThemedText>
                 </TouchableOpacity>
-            </ThemedView>
-        </ScrollView>
+            </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F0F4F8',
+        backgroundColor: '#FFFFFF',
+    },
+    scrollView: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
     },
     scrollContent: {
-        paddingBottom: 120,
+        paddingBottom: 100,
+        backgroundColor: '#FFFFFF',
     },
     content: {
-        padding: isSmallDevice ? 16 : 20,
-        paddingTop: isSmallDevice ? 12 : 16,
+        padding: isSmallDevice ? 12 : 16,
+        paddingTop: isSmallDevice ? 8 : 12,
         maxWidth: 600,
         width: '100%',
         alignSelf: 'center',
+        backgroundColor: '#FFFFFF',
     },
     header: {
-        marginBottom: isSmallDevice ? 20 : 26,
-        marginTop: isSmallDevice ? 24 : 32,
+        marginBottom: isSmallDevice ? 16 : 20,
+        marginTop: isSmallDevice ? 20 : 28,
         paddingHorizontal: 8,
     },
     title: {
         textAlign: 'center',
-        marginBottom: 8,
-        fontSize: isSmallDevice ? 26 : 30,
+        marginBottom: 6,
+        fontSize: isSmallDevice ? 24 : 28,
         fontWeight: '800',
         color: '#2D3748',
     },
     subtitle: {
         textAlign: 'center',
-        fontSize: isSmallDevice ? 14 : 15,
+        fontSize: isSmallDevice ? 13 : 14,
         color: '#718096',
         fontWeight: '500',
     },
     section: {
-        marginBottom: isSmallDevice ? 18 : 22,
+        marginBottom: isSmallDevice ? 14 : 18,
         borderRadius: 20,
         overflow: 'visible',
     },
@@ -283,7 +293,7 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     contentContainer: {
-        padding: isSmallDevice ? 10 : 14,
+        padding: isSmallDevice ? 8 : 12,
         borderRadius: 18,
         backgroundColor: '#FFFFFF',
         marginTop: 8,
@@ -295,10 +305,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: isSmallDevice ? 12 : 14,
-        paddingHorizontal: isSmallDevice ? 10 : 14,
-        borderRadius: 16,
-        marginBottom: 10,
+        paddingVertical: isSmallDevice ? 10 : 12,
+        paddingHorizontal: isSmallDevice ? 8 : 12,
+        borderRadius: 14,
+        marginBottom: 8,
         backgroundColor: '#F7FAFC',
         borderWidth: 0,
         shadowColor: '#000',
@@ -322,20 +332,20 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     iconContainer: {
-        width: isSmallDevice ? 40 : 46,
-        height: isSmallDevice ? 40 : 46,
-        borderRadius: isSmallDevice ? 20 : 23,
+        width: isSmallDevice ? 36 : 42,
+        height: isSmallDevice ? 36 : 42,
+        borderRadius: isSmallDevice ? 18 : 21,
         backgroundColor: '#E6FFFA',
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 10,
+        marginRight: 8,
         flexShrink: 0,
     },
     prayerIcon: {
-        fontSize: isSmallDevice ? 20 : 24,
+        fontSize: isSmallDevice ? 18 : 22,
     },
     prayerName: {
-        fontSize: isSmallDevice ? 15 : 17,
+        fontSize: isSmallDevice ? 14 : 16,
         fontWeight: '600',
         letterSpacing: 0.2,
         color: '#2D3748',
@@ -344,13 +354,13 @@ const styles = StyleSheet.create({
     counterContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: isSmallDevice ? 6 : 8,
+        gap: isSmallDevice ? 5 : 7,
         flexShrink: 0,
     },
     counterButton: {
-        width: isSmallDevice ? 36 : 42,
-        height: isSmallDevice ? 36 : 42,
-        borderRadius: isSmallDevice ? 18 : 21,
+        width: isSmallDevice ? 34 : 40,
+        height: isSmallDevice ? 34 : 40,
+        borderRadius: isSmallDevice ? 17 : 20,
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: '#000',
@@ -372,11 +382,11 @@ const styles = StyleSheet.create({
         lineHeight: isSmallDevice ? 20 : 24,
     },
     countDisplay: {
-        minWidth: isSmallDevice ? 42 : 50,
-        paddingHorizontal: isSmallDevice ? 8 : 12,
-        paddingVertical: isSmallDevice ? 8 : 10,
+        minWidth: isSmallDevice ? 38 : 46,
+        paddingHorizontal: isSmallDevice ? 7 : 10,
+        paddingVertical: isSmallDevice ? 7 : 9,
         backgroundColor: '#4FD1C5',
-        borderRadius: 12,
+        borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',
         shadowColor: '#4FD1C5',
@@ -389,7 +399,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#38B2AC',
     },
     countText: {
-        fontSize: isSmallDevice ? 16 : 18,
+        fontSize: isSmallDevice ? 15 : 17,
         fontWeight: '700',
     },
     countTextLight: {
@@ -398,11 +408,22 @@ const styles = StyleSheet.create({
     countTextDark: {
         color: '#FFFFFF',
     },
-    resetButton: {
-        marginTop: 24,
-        backgroundColor: '#FC8181',
+    fixedButtonContainer: {
+        position: 'absolute',
+        bottom: isSmallDevice ? 70 : 80,
+        left: 0,
+        right: 0,
+        backgroundColor: '#FFFFFF',
         paddingVertical: 14,
-        paddingHorizontal: 24,
+        paddingHorizontal: isSmallDevice ? 16 : 20,
+    },
+    fixedButtonContainerDark: {
+        backgroundColor: '#2D3748',
+    },
+    resetButton: {
+        backgroundColor: '#FC8181',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
         borderRadius: 14,
         flexDirection: 'row',
         alignItems: 'center',
@@ -412,6 +433,9 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 8,
         elevation: 4,
+        maxWidth: 600,
+        width: '100%',
+        alignSelf: 'center',
     },
     resetButtonDark: {
         backgroundColor: '#E53E3E',
