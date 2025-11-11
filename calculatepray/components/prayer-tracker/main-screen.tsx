@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, useColorScheme, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, useColorScheme, Dimensions, TouchableOpacity, Alert, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Collapsible } from '@/components/ui/collapsible';
 import { Ionicons } from '@expo/vector-icons';
+import { loadData, saveData, clearData } from '@/utils/storage';
 
 const { width } = Dimensions.get('window');
 const isSmallDevice = width < 375;
@@ -12,6 +13,7 @@ const isSmallDevice = width < 375;
 interface MainScreenProps {
     startDate: Date;
     debtDate: Date;
+    onReset?: () => void;
 }
 
 interface PrayerCounts {
@@ -30,7 +32,7 @@ const PRAYERS = [
     { key: 'yatsi', name: 'Yatsı', icon: '🌙' },
 ];
 
-export default function MainScreen({ startDate, debtDate }: MainScreenProps) {
+export default function MainScreen({ startDate, debtDate, onReset }: MainScreenProps) {
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
 
@@ -58,6 +60,73 @@ export default function MainScreen({ startDate, debtDate }: MainScreenProps) {
         aksam: daysDifference,
         yatsi: daysDifference,
     });
+
+    // Storage'dan verileri yükle (ilk açılışta)
+    useEffect(() => {
+        loadInitialData();
+    }, []);
+
+    const loadInitialData = async () => {
+        const storedData = await loadData();
+        if (storedData) {
+            setCurrentDebts(storedData.currentDebts);
+            setPastDebts(storedData.pastDebts);
+        }
+    };
+
+    // Counter değişikliklerini otomatik kaydet
+    useEffect(() => {
+        saveCurrentData();
+    }, [currentDebts, pastDebts]);
+
+    const saveCurrentData = async () => {
+        await saveData({
+            startDate: startDate.toISOString(),
+            debtDate: debtDate.toISOString(),
+            currentDebts,
+            pastDebts,
+        });
+    };
+
+    const handleResetData = () => {
+        if (Platform.OS === 'web') {
+            // Web için confirm kullan
+            const confirmed = window.confirm(
+                '⚠️ Emin Misiniz?\n\nTüm veriler silinecek ve yeni tarih girişi yapmanız gerekecek. Devam etmek istiyor musunuz?'
+            );
+            if (confirmed) {
+                clearData().then(() => {
+                    if (onReset) {
+                        onReset();
+                    }
+                });
+            }
+        } else {
+            // Mobil için Alert kullan
+            Alert.alert(
+                '⚠️ Emin Misiniz?',
+                'Tüm veriler silinecek ve yeni tarih girişi yapmanız gerekecek. Devam etmek istiyor musunuz?',
+                [
+                    {
+                        text: 'İptal',
+                        style: 'cancel',
+                        onPress: () => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning),
+                    },
+                    {
+                        text: 'Evet, Sil',
+                        style: 'destructive',
+                        onPress: async () => {
+                            await clearData();
+                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                            if (onReset) {
+                                onReset();
+                            }
+                        },
+                    },
+                ]
+            );
+        }
+    };
 
     const updateCount = (type: 'current' | 'past', prayer: keyof PrayerCounts, delta: number) => {
         if (type === 'current') {
@@ -143,6 +212,15 @@ export default function MainScreen({ startDate, debtDate }: MainScreenProps) {
                         </ThemedView>
                     </Collapsible>
                 </View>
+
+                <TouchableOpacity
+                    style={[styles.resetButton, isDark && styles.resetButtonDark]}
+                    onPress={handleResetData}
+                    activeOpacity={0.7}
+                >
+                    <Ionicons name="refresh" size={20} color="#FFFFFF" style={styles.resetIcon} />
+                    <ThemedText style={styles.resetButtonText}>Yeni Tarih Gir</ThemedText>
+                </TouchableOpacity>
             </ThemedView>
         </ScrollView>
     );
@@ -308,5 +386,32 @@ const styles = StyleSheet.create({
     },
     countTextDark: {
         color: '#FFFFFF',
+    },
+    resetButton: {
+        marginTop: 24,
+        backgroundColor: '#FC8181',
+        paddingVertical: 14,
+        paddingHorizontal: 24,
+        borderRadius: 14,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#FC8181',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    resetButtonDark: {
+        backgroundColor: '#E53E3E',
+    },
+    resetIcon: {
+        marginRight: 8,
+    },
+    resetButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: '700',
+        letterSpacing: 0.3,
     },
 });
