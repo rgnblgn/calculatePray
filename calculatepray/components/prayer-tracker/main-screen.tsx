@@ -39,6 +39,9 @@ export default function MainScreen({ startDate, debtDate, onReset }: MainScreenP
     // Hangi section açık?
     const [openSection, setOpenSection] = useState<'current' | 'past' | null>(null);
 
+    // Günün ayeti
+    const [dailyAyah, setDailyAyah] = useState<{ text: string; surah: string; numberInSurah: number } | null>(null);
+
     // Tarihler arası gün farkını hesapla
     const calculateDaysDifference = (date1: Date, date2: Date): number => {
         const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
@@ -67,7 +70,60 @@ export default function MainScreen({ startDate, debtDate, onReset }: MainScreenP
     // Storage'dan verileri yükle (ilk açılışta)
     useEffect(() => {
         loadInitialData();
+        fetchQuranData();
     }, []);
+
+    const fetchQuranData = async () => {
+        try {
+            let selectedAyah = null;
+            let attempts = 0;
+            const maxAttempts = 20; // Sonsuz döngüye girmemek için limit
+
+            // Text uzunluğu 25'in üstünde bir ayet bulana kadar dene
+            while ((!selectedAyah || selectedAyah.text.length < 25) && attempts < maxAttempts) {
+                attempts++;
+
+                // Random sure numarası seç (1 ile 114 arası)
+                const randomSurahNumber = Math.floor(Math.random() * 114) + 1;
+
+                console.log(`Attempt ${attempts}: Selected Surah Number: ${randomSurahNumber}`);
+
+                // O sureyi çek
+                const surahResponse = await fetch(`http://api.alquran.cloud/v1/surah/${randomSurahNumber}/tr.diyanet`);
+                const surahData = await surahResponse.json();
+
+                if (surahData.code === 200 && surahData.data && surahData.data.ayahs) {
+                    const ayahs = surahData.data.ayahs;
+                    const numberOfAyahs = ayahs.length;
+                    const surahName = surahData.data.name;
+
+                    // Random ayet numarası seç (2 ile numberOfAyahs arası, index için -1)
+                    const randomAyahIndex = Math.floor(Math.random() * (numberOfAyahs - 1)) + 1;
+
+                    selectedAyah = {
+                        ...ayahs[randomAyahIndex],
+                        surahName: surahName
+                    };
+
+                    console.log(`Ayah text length: ${selectedAyah.text.length}`);
+                }
+            }
+
+            // Uygun ayet bulunduysa state'e kaydet
+            if (selectedAyah && selectedAyah.text.length >= 25) {
+                console.log('Selected Ayah:', selectedAyah);
+                setDailyAyah({
+                    text: selectedAyah.text,
+                    surah: selectedAyah.surahName,
+                    numberInSurah: selectedAyah.numberInSurah
+                });
+            } else {
+                console.log('Could not find suitable ayah after max attempts');
+            }
+        } catch (error) {
+            console.error('Error fetching Quran data:', error);
+        }
+    };
 
     const loadInitialData = async () => {
         const storedData = await loadData();
@@ -201,6 +257,15 @@ export default function MainScreen({ startDate, debtDate, onReset }: MainScreenP
                         </ThemedText>
                     </View>
 
+                    <TouchableOpacity
+                        style={[styles.resetButton, isDark && styles.resetButtonDark]}
+                        onPress={handleResetData}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="refresh" size={18} color="#FFFFFF" style={styles.resetIcon} />
+                        <ThemedText style={styles.resetButtonText}>Yeni Tarih Gir</ThemedText>
+                    </TouchableOpacity>
+
                     <View style={[styles.section, styles.sectionShadow]}>
                         <Collapsible
                             title={`📊 Güncel Kazalar • Toplam: ${currentTotal}`}
@@ -224,19 +289,22 @@ export default function MainScreen({ startDate, debtDate, onReset }: MainScreenP
                             </ThemedView>
                         </Collapsible>
                     </View>
+
+                    {dailyAyah && (
+                        <View style={[styles.ayahContainer, isDark && styles.ayahContainerDark]}>
+                            <View style={styles.ayahHeader}>
+                                <ThemedText style={styles.ayahTitle}>📖 Günün Ayeti</ThemedText>
+                                <ThemedText style={styles.ayahReference}>
+                                    {dailyAyah.surah} - {dailyAyah.numberInSurah}
+                                </ThemedText>
+                            </View>
+                            <ThemedText style={[styles.ayahText, isDark && styles.ayahTextDark]}>
+                                {dailyAyah.text}
+                            </ThemedText>
+                        </View>
+                    )}
                 </View>
             </ScrollView>
-
-            <View style={[styles.fixedButtonContainer, isDark && styles.fixedButtonContainerDark]}>
-                <TouchableOpacity
-                    style={[styles.resetButton, isDark && styles.resetButtonDark]}
-                    onPress={handleResetData}
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name="refresh" size={20} color="#FFFFFF" style={styles.resetIcon} />
-                    <ThemedText style={styles.resetButtonText}>Yeni Tarih Gir</ThemedText>
-                </TouchableOpacity>
-            </View>
         </View>
     );
 }
@@ -251,7 +319,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     scrollContent: {
-        paddingBottom: 100,
+        paddingBottom: isSmallDevice ? 20 : 30,
         backgroundColor: '#FFFFFF',
     },
     content: {
@@ -279,6 +347,49 @@ const styles = StyleSheet.create({
         fontSize: isSmallDevice ? 13 : 14,
         color: '#718096',
         fontWeight: '500',
+    },
+    ayahContainer: {
+        backgroundColor: '#E6FFFA',
+        borderRadius: 16,
+        padding: isSmallDevice ? 14 : 18,
+        marginTop: isSmallDevice ? 20 : 24,
+        marginBottom: isSmallDevice ? 20 : 24,
+        borderLeftWidth: 4,
+        borderLeftColor: '#4FD1C5',
+        shadowColor: '#4FD1C5',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 8,
+        elevation: 3,
+    },
+    ayahContainerDark: {
+        backgroundColor: '#234E52',
+        borderLeftColor: '#38B2AC',
+    },
+    ayahHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    ayahTitle: {
+        fontSize: isSmallDevice ? 15 : 16,
+        fontWeight: '700',
+        color: '#2D3748',
+    },
+    ayahReference: {
+        fontSize: isSmallDevice ? 12 : 13,
+        fontWeight: '600',
+        color: '#4FD1C5',
+    },
+    ayahText: {
+        fontSize: isSmallDevice ? 14 : 15,
+        lineHeight: isSmallDevice ? 22 : 24,
+        color: '#2D3748',
+        fontStyle: 'italic',
+    },
+    ayahTextDark: {
+        color: '#E6FFFA',
     },
     section: {
         marginBottom: isSmallDevice ? 14 : 18,
@@ -408,45 +519,32 @@ const styles = StyleSheet.create({
     countTextDark: {
         color: '#FFFFFF',
     },
-    fixedButtonContainer: {
-        position: 'absolute',
-        bottom: isSmallDevice ? 70 : 80,
-        left: 0,
-        right: 0,
-        backgroundColor: '#FFFFFF',
-        paddingVertical: 14,
-        paddingHorizontal: isSmallDevice ? 16 : 20,
-    },
-    fixedButtonContainerDark: {
-        backgroundColor: '#2D3748',
-    },
     resetButton: {
         backgroundColor: '#FC8181',
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 14,
+        paddingVertical: isSmallDevice ? 10 : 12,
+        paddingHorizontal: isSmallDevice ? 16 : 20,
+        borderRadius: 12,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#FC8181',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 4,
-        maxWidth: 600,
-        width: '100%',
         alignSelf: 'center',
+        marginBottom: isSmallDevice ? 18 : 22,
+        shadowColor: '#FC8181',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 6,
+        elevation: 3,
     },
     resetButtonDark: {
         backgroundColor: '#E53E3E',
     },
     resetIcon: {
-        marginRight: 8,
+        marginRight: 6,
     },
     resetButtonText: {
         color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: '700',
-        letterSpacing: 0.3,
+        fontSize: isSmallDevice ? 14 : 15,
+        fontWeight: '600',
+        letterSpacing: 0.2,
     },
 });
