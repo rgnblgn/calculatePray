@@ -31,8 +31,38 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
     const [debtDate, setDebtDate] = useState<Date>(new Date());
     const [showStartPicker, setShowStartPicker] = useState(false);
     const [showDebtPicker, setShowDebtPicker] = useState(false);
+    const [startYearsAgo, setStartYearsAgo] = useState<string>('');
+    const [debtYearsAgo, setDebtYearsAgo] = useState<string>('');
     const colorScheme = useColorScheme();
     const isDark = colorScheme === 'dark';
+
+    const handleStartYearsAgoChange = (text: string) => {
+        // Sadece sayı girişine izin ver
+        const numericValue = text.replace(/[^0-9]/g, '');
+        setStartYearsAgo(numericValue);
+
+        if (numericValue && parseInt(numericValue) > 0) {
+            const years = parseInt(numericValue);
+            const today = new Date();
+            const pastDate = new Date(today);
+            pastDate.setFullYear(today.getFullYear() - years);
+            setStartDate(pastDate);
+        }
+    };
+
+    const handleDebtYearsAgoChange = (text: string) => {
+        // Sadece sayı girişine izin ver
+        const numericValue = text.replace(/[^0-9]/g, '');
+        setDebtYearsAgo(numericValue);
+
+        if (numericValue && parseInt(numericValue) > 0) {
+            const years = parseInt(numericValue);
+            const today = new Date();
+            const pastDate = new Date(today);
+            pastDate.setFullYear(today.getFullYear() - years);
+            setDebtDate(pastDate);
+        }
+    };
 
     const handleStartDateChange = (event: any, selectedDate?: Date) => {
         if (Platform.OS === 'android') {
@@ -68,29 +98,38 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
     return (
         <ThemedView style={styles.container}>
-            <View style={styles.card}>
-                <ThemedText type="title" style={styles.title}>
+            <View style={styles.content}>
+                <ThemedText style={styles.title}>
                     🕌 Namaz Takip
                 </ThemedText>
-                <ThemedText style={styles.subtitle}>
-                    Kaza namazlarınızı takip etmek için başlangıç bilgilerinizi girin
-                </ThemedText>
 
-                <View style={styles.questionContainer}>
-                    <ThemedText type="subtitle" style={styles.question}>
-                        📅 Namaza Başlanan Tarih
-                    </ThemedText>
+                <View style={styles.section}>
+                    <ThemedText style={styles.sectionTitle}>📅 Namaza Başlama</ThemedText>
+
+                    <View style={styles.inputRow}>
+                        <TextInput
+                            style={[styles.yearsInput, isDark && styles.yearsInputDark]}
+                            placeholder="Kaç yıl önce?"
+                            placeholderTextColor={isDark ? '#A0AEC0' : '#718096'}
+                            keyboardType="numeric"
+                            value={startYearsAgo}
+                            onChangeText={handleStartYearsAgoChange}
+                            maxLength={2}
+                        />
+                        <ThemedText style={styles.orDivider}>veya</ThemedText>
+                    </View>
+
                     {isWeb ? (
                         <div style={{ position: 'relative' }}>
                             <input
                                 className="custom-date-input"
                                 style={{
-                                    backgroundColor: isDark ? '#0A84FF' : '#007AFF',
-                                    padding: isSmallDevice ? '16px' : '18px',
-                                    borderRadius: '12px',
+                                    backgroundColor: isDark ? '#38B2AC' : '#4FD1C5',
+                                    padding: isSmallDevice ? '12px' : '14px',
+                                    borderRadius: '10px',
                                     border: 'none',
                                     color: '#FFFFFF',
-                                    fontSize: isSmallDevice ? '17px' : '18px',
+                                    fontSize: isSmallDevice ? '15px' : '16px',
                                     fontWeight: '600',
                                     textAlign: 'center',
                                     width: '100%',
@@ -108,7 +147,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                                 .custom-date-input::-webkit-calendar-picker-indicator {
                                     filter: invert(1);
                                     cursor: pointer;
-                                    font-size: 18px;
+                                    font-size: 16px;
                                 }
                                 .custom-date-input::-webkit-datetime-edit {
                                     color: white;
@@ -131,7 +170,6 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                                 }
                                 .custom-date-input:hover {
                                     opacity: 0.9;
-                                    transition: opacity 0.2s;
                                 }
                             `}</style>
                         </div>
@@ -157,21 +195,33 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     )}
                 </View>
 
-                <View style={styles.questionContainer}>
-                    <ThemedText type="subtitle" style={styles.question}>
-                        📋 Hangi Tarihten Beri Borç Eklemek İstiyorsunuz?
-                    </ThemedText>
+                <View style={styles.section}>
+                    <ThemedText style={styles.sectionTitle}>📋 Borç Ekleme</ThemedText>
+
+                    <View style={styles.inputRow}>
+                        <TextInput
+                            style={[styles.yearsInput, isDark && styles.yearsInputDark]}
+                            placeholder="Kaç yıl öncesinden?"
+                            placeholderTextColor={isDark ? '#A0AEC0' : '#718096'}
+                            keyboardType="numeric"
+                            value={debtYearsAgo}
+                            onChangeText={handleDebtYearsAgoChange}
+                            maxLength={2}
+                        />
+                        <ThemedText style={styles.orDivider}>veya</ThemedText>
+                    </View>
+
                     {isWeb ? (
                         <div style={{ position: 'relative' }}>
                             <input
-                                className="custom-date-input"
+                                className="custom-date-input-debt"
                                 style={{
-                                    backgroundColor: isDark ? '#0A84FF' : '#007AFF',
-                                    padding: isSmallDevice ? '16px' : '18px',
-                                    borderRadius: '12px',
+                                    backgroundColor: isDark ? '#38B2AC' : '#4FD1C5',
+                                    padding: isSmallDevice ? '12px' : '14px',
+                                    borderRadius: '10px',
                                     border: 'none',
                                     color: '#FFFFFF',
-                                    fontSize: isSmallDevice ? '17px' : '18px',
+                                    fontSize: isSmallDevice ? '15px' : '16px',
                                     fontWeight: '600',
                                     textAlign: 'center',
                                     width: '100%',
@@ -185,6 +235,35 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                                 type="date"
                                 max={formatDateForInput(new Date())}
                             />
+                            <style>{`
+                                .custom-date-input-debt::-webkit-calendar-picker-indicator {
+                                    filter: invert(1);
+                                    cursor: pointer;
+                                    font-size: 16px;
+                                }
+                                .custom-date-input-debt::-webkit-datetime-edit {
+                                    color: white;
+                                }
+                                .custom-date-input-debt::-webkit-datetime-edit-fields-wrapper {
+                                    color: white;
+                                }
+                                .custom-date-input-debt::-webkit-datetime-edit-text {
+                                    color: white;
+                                    padding: 0 0.3em;
+                                }
+                                .custom-date-input-debt::-webkit-datetime-edit-month-field {
+                                    color: white;
+                                }
+                                .custom-date-input-debt::-webkit-datetime-edit-day-field {
+                                    color: white;
+                                }
+                                .custom-date-input-debt::-webkit-datetime-edit-year-field {
+                                    color: white;
+                                }
+                                .custom-date-input-debt:hover {
+                                    opacity: 0.9;
+                                }
+                            `}</style>
                         </div>
                     ) : (
                         <>
@@ -213,7 +292,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
                     onPress={() => onComplete(startDate, debtDate)}
                     activeOpacity={0.8}
                 >
-                    <ThemedText style={styles.submitButtonText}>✨ Devam Et</ThemedText>
+                    <ThemedText style={styles.submitButtonText}>Devam Et ✓</ThemedText>
                 </TouchableOpacity>
             </View>
         </ThemedView>
@@ -226,87 +305,77 @@ const styles = StyleSheet.create({
         padding: isSmallDevice ? 16 : 20,
         justifyContent: 'center',
     },
-    card: {
-        borderRadius: 20,
-        padding: isSmallDevice ? 20 : 24,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-        elevation: 5,
+    content: {
         maxWidth: 500,
         width: '100%',
         alignSelf: 'center',
     },
     title: {
         textAlign: 'center',
-        marginBottom: 12,
-        fontSize: isSmallDevice ? 28 : 32,
-        fontWeight: 'bold',
+        marginBottom: 24,
+        fontSize: isSmallDevice ? 24 : 28,
+        fontWeight: '700',
     },
-    subtitle: {
-        textAlign: 'center',
-        marginBottom: isSmallDevice ? 24 : 32,
-        fontSize: isSmallDevice ? 14 : 15,
-        opacity: 0.7,
-        lineHeight: 22,
-        paddingHorizontal: 10,
+    section: {
+        marginBottom: 20,
     },
-    questionContainer: {
-        marginBottom: isSmallDevice ? 24 : 28,
-        width: '100%',
-    },
-    question: {
-        marginBottom: 12,
-        fontSize: isSmallDevice ? 16 : 17,
+    sectionTitle: {
+        fontSize: isSmallDevice ? 15 : 16,
         fontWeight: '600',
+        marginBottom: 10,
+        opacity: 0.8,
+    },
+    inputRow: {
+        marginBottom: 8,
+    },
+    yearsInput: {
+        backgroundColor: '#FFFFFF',
+        padding: 12,
+        borderRadius: 10,
+        fontSize: 16,
+        fontWeight: '600',
+        textAlign: 'center',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+        color: '#2D3748',
+        marginBottom: 8,
+    },
+    yearsInputDark: {
+        backgroundColor: '#2D3748',
+        color: '#FFFFFF',
+        borderColor: '#4A5568',
+    },
+    orDivider: {
+        textAlign: 'center',
+        fontSize: 12,
+        opacity: 0.5,
+        marginBottom: 8,
     },
     dateButton: {
-        backgroundColor: '#007AFF',
-        padding: isSmallDevice ? 16 : 18,
-        borderRadius: 12,
+        backgroundColor: '#4FD1C5',
+        padding: isSmallDevice ? 12 : 14,
+        borderRadius: 10,
         alignItems: 'center',
-        shadowColor: '#007AFF',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 8,
-        elevation: 4,
-        width: '100%',
     },
     dateButtonDark: {
-        backgroundColor: '#0A84FF',
+        backgroundColor: '#38B2AC',
     },
     dateText: {
         color: '#FFFFFF',
-        fontSize: isSmallDevice ? 17 : 18,
+        fontSize: isSmallDevice ? 15 : 16,
         fontWeight: '600',
     },
     submitButton: {
-        backgroundColor: '#34C759',
-        padding: isSmallDevice ? 16 : 18,
-        borderRadius: 12,
+        backgroundColor: '#68D391',
+        padding: isSmallDevice ? 14 : 16,
+        borderRadius: 10,
         alignItems: 'center',
-        marginTop: 12,
-        shadowColor: '#34C759',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 4,
-        width: '100%',
+        marginTop: 24,
     },
     submitButtonText: {
         color: '#FFFFFF',
-        fontSize: isSmallDevice ? 18 : 20,
-        fontWeight: 'bold',
+        fontSize: isSmallDevice ? 16 : 18,
+        fontWeight: '700',
     },
 });
 
