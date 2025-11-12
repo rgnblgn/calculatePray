@@ -14,6 +14,7 @@ interface StoredData {
     debtDate: string;
     currentDebts: PrayerCounts;
     pastDebts: PrayerCounts;
+    fastingDebt?: number;
 }
 
 const STORAGE_KEY = '@prayer_tracker_data';

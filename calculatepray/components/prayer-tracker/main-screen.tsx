@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     scrollContent: {
-        paddingBottom: isSmallDevice ? 20 : 30,
+        paddingBottom: 80,
         backgroundColor: '#FFFFFF',
     },
     content: {
