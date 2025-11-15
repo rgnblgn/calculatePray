@@ -63,6 +63,9 @@ export default function MainScreen({
     "current" | "voluntary" | null
   >(null);
 
+  // Detayları göster/gizle
+  const [showDebtDetails, setShowDebtDetails] = useState(false);
+
   // Günün ayeti
   const [dailyAyah, setDailyAyah] = useState<{
     text: string;
@@ -79,6 +82,14 @@ export default function MainScreen({
   });
 
   const [voluntaryPrayers, setVoluntaryPrayers] = useState<PrayerCounts>({
+    sabah: 0,
+    ogle: 0,
+    ikindi: 0,
+    aksam: 0,
+    yatsi: 0,
+  });
+
+  const [paidDebts, setPaidDebts] = useState<PrayerCounts>({
     sabah: 0,
     ogle: 0,
     ikindi: 0,
@@ -165,6 +176,15 @@ export default function MainScreen({
           yatsi: 0,
         }
       );
+      setPaidDebts(
+        storedData.paidDebts || {
+          sabah: 0,
+          ogle: 0,
+          ikindi: 0,
+          aksam: 0,
+          yatsi: 0,
+        }
+      );
     }
   };
 
@@ -174,8 +194,9 @@ export default function MainScreen({
       debtDate: debtDate.toISOString(),
       currentDebts,
       voluntaryPrayers,
+      paidDebts,
     });
-  }, [startDate, debtDate, currentDebts, voluntaryPrayers]);
+  }, [startDate, debtDate, currentDebts, voluntaryPrayers, paidDebts]);
 
   // Counter değişikliklerini otomatik kaydet
   useEffect(() => {
@@ -245,16 +266,95 @@ export default function MainScreen({
     }
   };
 
+  const handleSaveVoluntaryPrayers = async () => {
+    if (voluntaryTotal === 0) {
+      Alert.alert("Uyarı", "Kaydedilecek nafile namaz bulunmuyor.");
+      return;
+    }
+
+    // Nafile namazları paidDebts'e ekle (currentDebts'e ekleme!)
+    const updatedPaidDebts: PrayerCounts = {
+      sabah: paidDebts.sabah + voluntaryPrayers.sabah,
+      ogle: paidDebts.ogle + voluntaryPrayers.ogle,
+      ikindi: paidDebts.ikindi + voluntaryPrayers.ikindi,
+      aksam: paidDebts.aksam + voluntaryPrayers.aksam,
+      yatsi: paidDebts.yatsi + voluntaryPrayers.yatsi,
+    };
+
+    setPaidDebts(updatedPaidDebts);
+
+    // Nafile namazları sıfırla
+    setVoluntaryPrayers({
+      sabah: 0,
+      ogle: 0,
+      ikindi: 0,
+      aksam: 0,
+      yatsi: 0,
+    });
+
+    // Storage'a kaydet
+    await saveData({
+      startDate: startDate.toISOString(),
+      debtDate: debtDate.toISOString(),
+      currentDebts,
+      voluntaryPrayers: {
+        sabah: 0,
+        ogle: 0,
+        ikindi: 0,
+        aksam: 0,
+        yatsi: 0,
+      },
+      paidDebts: updatedPaidDebts,
+    });
+
+    // Başarı feedback'i
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert(
+      "✅ Kaydedildi",
+      `${voluntaryTotal} nafile namaz borçtan düşüldü. Allah kabul etsin! 🤲`
+    );
+  };
+
   const currentTotal = Object.values(currentDebts).reduce((a, b) => a + b, 0);
   const voluntaryTotal = Object.values(voluntaryPrayers).reduce(
     (a, b) => a + b,
     0
   );
 
-  // Nafile namazlardan kalan gün sayısını hesapla
-  // Her 5 nafile namaz (5 vakit) = 1 gün borç ödenir
-  const completedDays = Math.floor(voluntaryTotal / 5);
-  const remainingDebtDays = Math.max(0, daysDifference - completedDays);
+  // Toplam borç hesaplama
+  // Gün hesabı: Her vakitten (currentDebts + paidDebts) kaç tane kılınmışsa
+  // En az kılınan vakit sayısı = Tam gün sayısı
+  const completedDays = Math.min(
+    currentDebts.sabah + paidDebts.sabah,
+    currentDebts.ogle + paidDebts.ogle,
+    currentDebts.ikindi + paidDebts.ikindi,
+    currentDebts.aksam + paidDebts.aksam,
+    currentDebts.yatsi + paidDebts.yatsi
+  );
+
+  const remainingDays = Math.max(0, daysDifference - completedDays);
+
+  // Her vakitten kaç namaz borcu kaldığını hesapla (paidDebts dahil)
+  const getDebtDetailsByPrayer = () => {
+    const prayerOrder = ["sabah", "ogle", "ikindi", "aksam", "yatsi"] as const;
+    const prayerDisplayNames = ["Sabah", "Öğle", "İkindi", "Akşam", "Yatsı"];
+    const prayerIcons = ["🌅", "☀️", "🌤️", "🌆", "🌙"];
+
+    return prayerOrder.map((key, index) => {
+      const totalExpected = daysDifference;
+      const completed = currentDebts[key] + paidDebts[key];
+      const remaining = Math.max(0, totalExpected - completed);
+
+      return {
+        key,
+        name: prayerDisplayNames[index],
+        icon: prayerIcons[index],
+        remaining,
+      };
+    });
+  };
+
+  const debtDetails = getDebtDetailsByPrayer();
 
   const renderPrayerItem = (
     prayer: (typeof PRAYERS)[0],
@@ -398,22 +498,126 @@ export default function MainScreen({
                 )}
               </ThemedView>
               {openSection === "voluntary" && (
-                <View
-                  style={[
-                    styles.voluntaryNote,
-                    isDark && styles.voluntaryNoteDark,
-                  ]}
-                >
-                  <ThemedText
+                <>
+                  <View
                     style={[
-                      styles.voluntaryNoteText,
-                      isDark && styles.voluntaryNoteTextDark,
+                      styles.voluntaryNote,
+                      isDark && styles.voluntaryNoteDark,
                     ]}
                   >
-                    Toplam {remainingDebtDays} gün borcunuz var. Allah
-                    namazlarınızı kabul etsin. 🤲
-                  </ThemedText>
-                </View>
+                    <ThemedText
+                      style={[
+                        styles.voluntaryNoteText,
+                        isDark && styles.voluntaryNoteTextDark,
+                      ]}
+                    >
+                      {remainingDays > 0
+                        ? `Yaklaşık ${remainingDays} gün borcunuz var.`
+                        : "Tebrikler! Borcunuz kalmadı! 🎉"}
+                      {"\n"}
+                      Allah namazlarınızı kabul etsin. 🤲
+                    </ThemedText>
+                  </View>
+
+                  {remainingDays > 0 && (
+                    <TouchableOpacity
+                      style={[
+                        styles.detailsButton,
+                        isDark && styles.detailsButtonDark,
+                      ]}
+                      onPress={() => setShowDebtDetails(!showDebtDetails)}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons
+                        name={showDebtDetails ? "chevron-up" : "chevron-down"}
+                        size={18}
+                        color={isDark ? "#D4C4B0" : "#8B7355"}
+                        style={styles.detailsIcon}
+                      />
+                      <ThemedText
+                        style={[
+                          styles.detailsButtonText,
+                          isDark && styles.detailsButtonTextDark,
+                        ]}
+                      >
+                        {showDebtDetails
+                          ? "Detayları Gizle"
+                          : "Detayları Göster"}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  )}
+
+                  {showDebtDetails && remainingDays > 0 && (
+                    <View
+                      style={[
+                        styles.debtDetailsContainer,
+                        isDark && styles.debtDetailsContainerDark,
+                      ]}
+                    >
+                      <ThemedText
+                        style={[
+                          styles.debtDetailsTitle,
+                          isDark && styles.debtDetailsTitleDark,
+                        ]}
+                      >
+                        Vakit Bazında Kalan Borçlar:
+                      </ThemedText>
+                      {debtDetails.map(
+                        (detail) =>
+                          detail.remaining > 0 && (
+                            <View
+                              key={detail.key}
+                              style={[
+                                styles.debtDetailItem,
+                                isDark && styles.debtDetailItemDark,
+                              ]}
+                            >
+                              <ThemedText style={styles.debtDetailIcon}>
+                                {detail.icon}
+                              </ThemedText>
+                              <ThemedText
+                                style={[
+                                  styles.debtDetailName,
+                                  isDark && styles.debtDetailNameDark,
+                                ]}
+                              >
+                                {detail.name}
+                              </ThemedText>
+                              <ThemedText
+                                style={[
+                                  styles.debtDetailCount,
+                                  isDark && styles.debtDetailCountDark,
+                                ]}
+                              >
+                                {detail.remaining} adet
+                              </ThemedText>
+                            </View>
+                          )
+                      )}
+                    </View>
+                  )}
+
+                  {voluntaryTotal > 0 && (
+                    <TouchableOpacity
+                      style={[
+                        styles.saveButton,
+                        isDark && styles.saveButtonDark,
+                      ]}
+                      onPress={handleSaveVoluntaryPrayers}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={20}
+                        color="#FFFFFF"
+                        style={styles.saveIcon}
+                      />
+                      <ThemedText style={styles.saveButtonText}>
+                        Kaydet ve Borçtan Düş
+                      </ThemedText>
+                    </TouchableOpacity>
+                  )}
+                </>
               )}
             </Collapsible>
           </View>
@@ -702,5 +906,114 @@ const styles = StyleSheet.create({
   },
   voluntaryNoteTextDark: {
     color: "#D4C4B0",
+  },
+  saveButton: {
+    backgroundColor: "#8B9A7E",
+    paddingVertical: isSmallDevice ? 10 : 12,
+    paddingHorizontal: isSmallDevice ? 16 : 20,
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 12,
+    marginHorizontal: isSmallDevice ? 8 : 12,
+    marginBottom: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  saveButtonDark: {
+    backgroundColor: "#6B7A5F",
+  },
+  saveIcon: {
+    marginRight: 6,
+  },
+  saveButtonText: {
+    color: "#FFFFFF",
+    fontSize: isSmallDevice ? 14 : 15,
+    fontWeight: "600",
+    letterSpacing: 0.2,
+  },
+  detailsButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: isSmallDevice ? 8 : 10,
+    marginTop: 8,
+    marginHorizontal: isSmallDevice ? 8 : 12,
+    marginBottom: 4,
+  },
+  detailsButtonDark: {
+    opacity: 0.9,
+  },
+  detailsIcon: {
+    marginRight: 4,
+  },
+  detailsButtonText: {
+    fontSize: isSmallDevice ? 12 : 13,
+    color: "#8B7355",
+    fontWeight: "600",
+  },
+  detailsButtonTextDark: {
+    color: "#D4C4B0",
+  },
+  debtDetailsContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: isSmallDevice ? 10 : 12,
+    marginTop: 8,
+    marginHorizontal: isSmallDevice ? 8 : 12,
+    marginBottom: 4,
+    borderWidth: 1,
+    borderColor: "#E5DDD1",
+  },
+  debtDetailsContainerDark: {
+    backgroundColor: "#2A2520",
+    borderColor: "#5C4A3A",
+  },
+  debtDetailsTitle: {
+    fontSize: isSmallDevice ? 12 : 13,
+    fontWeight: "700",
+    color: "#5C4A3A",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  debtDetailsTitleDark: {
+    color: "#D4C4B0",
+  },
+  debtDetailItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: isSmallDevice ? 6 : 8,
+    paddingHorizontal: isSmallDevice ? 8 : 10,
+    backgroundColor: "#FAF8F3",
+    borderRadius: 8,
+    marginBottom: 6,
+  },
+  debtDetailItemDark: {
+    backgroundColor: "#3D3428",
+  },
+  debtDetailIcon: {
+    fontSize: isSmallDevice ? 16 : 18,
+    marginRight: 8,
+  },
+  debtDetailName: {
+    flex: 1,
+    fontSize: isSmallDevice ? 13 : 14,
+    fontWeight: "600",
+    color: "#5C4A3A",
+  },
+  debtDetailNameDark: {
+    color: "#E5DDD1",
+  },
+  debtDetailCount: {
+    fontSize: isSmallDevice ? 12 : 13,
+    fontWeight: "700",
+    color: "#8B7355",
+  },
+  debtDetailCountDark: {
+    color: "#B89968",
   },
 });

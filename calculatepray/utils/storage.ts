@@ -14,6 +14,7 @@ interface StoredData {
   debtDate: string;
   currentDebts: PrayerCounts;
   voluntaryPrayers: PrayerCounts;
+  paidDebts: PrayerCounts; // Nafile namazlarla ödenmiş borçlar (vakit bazında)
   fastingDebt?: number;
 }
 

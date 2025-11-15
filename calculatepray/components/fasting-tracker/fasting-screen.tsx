@@ -57,7 +57,8 @@ export default function FastingScreen() {
         startDate: new Date().toISOString(),
         debtDate: new Date().toISOString(),
         currentDebts: { sabah: 0, ogle: 0, ikindi: 0, aksam: 0, yatsi: 0 },
-        pastDebts: { sabah: 0, ogle: 0, ikindi: 0, aksam: 0, yatsi: 0 },
+        voluntaryPrayers: { sabah: 0, ogle: 0, ikindi: 0, aksam: 0, yatsi: 0 },
+        paidDebts: { sabah: 0, ogle: 0, ikindi: 0, aksam: 0, yatsi: 0 },
         fastingDebt,
       });
     }
