@@ -49,6 +49,15 @@ export default function MainScreen({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
+  // Tarihler arası gün farkını hesapla
+  const calculateDaysDifference = (date1: Date, date2: Date): number => {
+    const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
+    const diffTime = Math.abs(date2.getTime() - date1.getTime());
+    return Math.floor(diffTime / oneDay);
+  };
+
+  const daysDifference = calculateDaysDifference(startDate, debtDate);
+
   // Hangi section açık?
   const [openSection, setOpenSection] = useState<
     "current" | "voluntary" | null
@@ -242,6 +251,11 @@ export default function MainScreen({
     0
   );
 
+  // Nafile namazlardan kalan gün sayısını hesapla
+  // Her 5 nafile namaz (5 vakit) = 1 gün borç ödenir
+  const completedDays = Math.floor(voluntaryTotal / 5);
+  const remainingDebtDays = Math.max(0, daysDifference - completedDays);
+
   const renderPrayerItem = (
     prayer: (typeof PRAYERS)[0],
     count: number,
@@ -383,6 +397,24 @@ export default function MainScreen({
                   )
                 )}
               </ThemedView>
+              {openSection === "voluntary" && (
+                <View
+                  style={[
+                    styles.voluntaryNote,
+                    isDark && styles.voluntaryNoteDark,
+                  ]}
+                >
+                  <ThemedText
+                    style={[
+                      styles.voluntaryNoteText,
+                      isDark && styles.voluntaryNoteTextDark,
+                    ]}
+                  >
+                    Toplam {remainingDebtDays} gün borcunuz var. Allah
+                    namazlarınızı kabul etsin. 🤲
+                  </ThemedText>
+                </View>
+              )}
             </Collapsible>
           </View>
 
@@ -646,5 +678,29 @@ const styles = StyleSheet.create({
     fontSize: isSmallDevice ? 14 : 15,
     fontWeight: "600",
     letterSpacing: 0.2,
+  },
+  voluntaryNote: {
+    backgroundColor: "#FFF5E6",
+    borderRadius: 12,
+    padding: isSmallDevice ? 10 : 14,
+    marginTop: 12,
+    marginHorizontal: isSmallDevice ? 8 : 12,
+    marginBottom: 4,
+    borderLeftWidth: 3,
+    borderLeftColor: "#F6AD55",
+  },
+  voluntaryNoteDark: {
+    backgroundColor: "#4A3520",
+    borderLeftColor: "#DD6B20",
+  },
+  voluntaryNoteText: {
+    fontSize: isSmallDevice ? 12 : 13,
+    lineHeight: isSmallDevice ? 18 : 20,
+    color: "#744210",
+    textAlign: "center",
+    fontWeight: "500",
+  },
+  voluntaryNoteTextDark: {
+    color: "#F6E05E",
   },
 });
