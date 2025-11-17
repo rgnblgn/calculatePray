@@ -54,7 +54,6 @@ export default function FastingScreen() {
     } else {
       // Eğer hiç veri yoksa sadece fasting'i kaydet
       await saveData({
-        startDate: new Date().toISOString(),
         debtDate: new Date().toISOString(),
         currentDebts: { sabah: 0, ogle: 0, ikindi: 0, aksam: 0, yatsi: 0 },
         voluntaryPrayers: { sabah: 0, ogle: 0, ikindi: 0, aksam: 0, yatsi: 0 },
@@ -176,6 +175,8 @@ const styles = StyleSheet.create({
     fontSize: isSmallDevice ? 28 : 32,
     fontWeight: "800",
     color: "#2D3748",
+    lineHeight: isSmallDevice ? 36 : 42,
+    includeFontPadding: false,
   },
   subtitle: {
     textAlign: "center",
@@ -208,9 +209,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
+    overflow: "visible",
   },
   mainIcon: {
     fontSize: isSmallDevice ? 36 : 42,
+    lineHeight: isSmallDevice ? 42 : 50,
+    textAlign: "center",
   },
   label: {
     fontSize: isSmallDevice ? 18 : 20,
@@ -248,6 +252,7 @@ const styles = StyleSheet.create({
   },
   countDisplay: {
     minWidth: isSmallDevice ? 70 : 85,
+    minHeight: isSmallDevice ? 56 : 64,
     paddingHorizontal: isSmallDevice ? 18 : 22,
     paddingVertical: isSmallDevice ? 14 : 16,
     backgroundColor: "#B89968",
@@ -259,6 +264,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 5,
     elevation: 3,
+    overflow: "visible",
   },
   countDisplayDark: {
     backgroundColor: "#8B7355",
@@ -266,6 +272,9 @@ const styles = StyleSheet.create({
   countText: {
     fontSize: isSmallDevice ? 28 : 34,
     fontWeight: "800",
+    lineHeight: isSmallDevice ? 36 : 44,
+    textAlign: "center",
+    includeFontPadding: false,
   },
   countTextLight: {
     color: "#FFFFFF",
