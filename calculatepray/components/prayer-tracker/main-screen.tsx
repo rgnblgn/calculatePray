@@ -17,6 +17,7 @@ import { ThemedView } from "@/components/themed-view";
 import { Collapsible } from "@/components/ui/collapsible";
 import { Ionicons } from "@expo/vector-icons";
 import { loadData, saveData, clearData } from "@/utils/storage";
+import surahNames from "@/constants/surahs.json";
 
 const { width } = Dimensions.get("window");
 const isSmallDevice = width < 375;
@@ -74,6 +75,7 @@ export default function MainScreen({
         text: string;
         surah: string;
         numberInSurah: number;
+        surahNumber: number;
     } | null>(null);
 
     const [currentDebts, setCurrentDebts] = useState<PrayerCounts>({
@@ -121,6 +123,7 @@ export default function MainScreen({
             const translation = translationMap[language] || 'tr.diyanet';
 
             let selectedAyah = null;
+            let selectedSurahNumber = 0;
             let attempts = 0;
             const maxAttempts = 20; // Sonsuz döngüye girmemek için limit
 
@@ -133,6 +136,7 @@ export default function MainScreen({
 
                 // Random sure numarası seç (1 ile 114 arası)
                 const randomSurahNumber = Math.floor(Math.random() * 114) + 1;
+                selectedSurahNumber = randomSurahNumber;
 
                 console.log(
                     `Attempt ${attempts}: Selected Surah Number: ${randomSurahNumber}`
@@ -169,6 +173,7 @@ export default function MainScreen({
                     text: selectedAyah.text,
                     surah: selectedAyah.surahName,
                     numberInSurah: selectedAyah.numberInSurah,
+                    surahNumber: selectedSurahNumber,
                 });
             } else {
                 console.log("Could not find suitable ayah after max attempts");
@@ -684,7 +689,10 @@ export default function MainScreen({
                             <View style={styles.ayahHeader}>
                                 <ThemedText style={styles.ayahTitle}>📖 {t('mainScreen.dailyVerse')}</ThemedText>
                                 <ThemedText style={styles.ayahReference}>
-                                    {dailyAyah.surah} - {dailyAyah.numberInSurah}
+                                    {language === 'ar'
+                                        ? dailyAyah.surah
+                                        : (surahNames as any)[dailyAyah.surahNumber.toString()][language] || dailyAyah.surah
+                                    } - {dailyAyah.numberInSurah}
                                 </ThemedText>
                             </View>
                             <ThemedText
