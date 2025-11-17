@@ -1,0 +1,25 @@
+{
+    "languageSelection": {
+        "title": "Select Language",
+        "subtitle": "Choose your preferred language"
+    },
+    "onboarding": {
+        "title": "🕌 Prayer Tracker",
+        "prayerStart": "📅 Prayer Start Date",
+        "debtAdding": "📋 Add Debt",
+        "yearsAgoPlaceholder": "How many years ago?",
+        "debtYearsAgoPlaceholder": "How many years ago?",
+        "or": "or",
+        "continue": "Continue ✓"
+    },
+    "tabs": {
+        "prayer": "Prayer",
+        "fasting": "Fasting"
+    },
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "yes": "Yes",
+        "no": "No"
+    }
+}

@@ -8,6 +8,7 @@ import {
   Dimensions,
   TextInput,
 } from "react-native";
+import { useTranslation } from "react-i18next";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -37,6 +38,7 @@ const formatDateForInput = (date: Date) => {
 export default function OnboardingScreen({
   onComplete,
 }: OnboardingScreenProps) {
+  const { t } = useTranslation();
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [debtDate, setDebtDate] = useState<Date>(new Date());
   const [showStartPicker, setShowStartPicker] = useState(false);
@@ -109,22 +111,22 @@ export default function OnboardingScreen({
   return (
     <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <ThemedText style={styles.title}>🕌 Namaz Takip</ThemedText>
+        <ThemedText style={styles.title}>{t('onboarding.title')}</ThemedText>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>📅 Namaza Başlama</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('onboarding.prayerStart')}</ThemedText>
 
           <View style={styles.inputRow}>
             <TextInput
               style={[styles.yearsInput, isDark && styles.yearsInputDark]}
-              placeholder="Kaç yıl önce?"
+              placeholder={t('onboarding.yearsAgoPlaceholder')}
               placeholderTextColor={isDark ? "#A0AEC0" : "#718096"}
               keyboardType="numeric"
               value={startYearsAgo}
               onChangeText={handleStartYearsAgoChange}
               maxLength={2}
             />
-            <ThemedText style={styles.orDivider}>veya</ThemedText>
+            <ThemedText style={styles.orDivider}>{t('onboarding.or')}</ThemedText>
           </View>
 
           {isWeb ? (
@@ -206,19 +208,19 @@ export default function OnboardingScreen({
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>📋 Borç Ekleme</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t('onboarding.debtAdding')}</ThemedText>
 
           <View style={styles.inputRow}>
             <TextInput
               style={[styles.yearsInput, isDark && styles.yearsInputDark]}
-              placeholder="Kaç yıl öncesinden?"
+              placeholder={t('onboarding.debtYearsAgoPlaceholder')}
               placeholderTextColor={isDark ? "#A0AEC0" : "#718096"}
               keyboardType="numeric"
               value={debtYearsAgo}
               onChangeText={handleDebtYearsAgoChange}
               maxLength={2}
             />
-            <ThemedText style={styles.orDivider}>veya</ThemedText>
+            <ThemedText style={styles.orDivider}>{t('onboarding.or')}</ThemedText>
           </View>
 
           {isWeb ? (
@@ -304,7 +306,7 @@ export default function OnboardingScreen({
           onPress={() => onComplete(startDate, debtDate)}
           activeOpacity={0.8}
         >
-          <ThemedText style={styles.submitButtonText}>Devam Et ✓</ThemedText>
+          <ThemedText style={styles.submitButtonText}>{t('onboarding.continue')}</ThemedText>
         </TouchableOpacity>
       </View>
     </ThemedView>

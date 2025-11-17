@@ -1,0 +1,25 @@
+{
+    "languageSelection": {
+        "title": "Dil Seçin",
+        "subtitle": "Tercih ettiğiniz dili seçin"
+    },
+    "onboarding": {
+        "title": "🕌 Namaz Takip",
+        "prayerStart": "📅 Namaza Başlama",
+        "debtAdding": "📋 Borç Ekleme",
+        "yearsAgoPlaceholder": "Kaç yıl önce?",
+        "debtYearsAgoPlaceholder": "Kaç yıl öncesinden?",
+        "or": "veya",
+        "continue": "Devam Et ✓"
+    },
+    "tabs": {
+        "prayer": "Namaz",
+        "fasting": "Oruç"
+    },
+    "common": {
+        "save": "Kaydet",
+        "cancel": "İptal",
+        "yes": "Evet",
+        "no": "Hayır"
+    }
+}
