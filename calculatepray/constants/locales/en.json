@@ -6,7 +6,8 @@
     "onboarding": {
         "title": "🕌 Prayer Tracker",
         "prayerStart": "📅 Prayer Start Date",
-        "debtAdding": "📋 Add Debt",
+        "debtAddingTitle": "🤲 Let's Calculate Missed Prayers",
+        "debtAddingSubtitle": "Approximately how long ago?",
         "yearsAgoPlaceholder": "How many years ago?",
         "debtYearsAgoPlaceholder": "How many years ago?",
         "or": "or",

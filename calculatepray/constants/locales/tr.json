@@ -6,7 +6,8 @@
     "onboarding": {
         "title": "🕌 Namaz Takip",
         "prayerStart": "📅 Namaza Başlama",
-        "debtAdding": "📋 Borç Ekleme",
+        "debtAddingTitle": "🤲 Kaza Hesabı Yapalım",
+        "debtAddingSubtitle": "Tahmini olarak ne kadar süre eksik?",
         "yearsAgoPlaceholder": "Kaç yıl önce?",
         "debtYearsAgoPlaceholder": "Kaç yıl öncesinden?",
         "or": "veya",

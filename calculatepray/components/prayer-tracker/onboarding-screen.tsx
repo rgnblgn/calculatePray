@@ -83,7 +83,10 @@ export default function OnboardingScreen({
         <ThemedText style={styles.title}>{t('onboarding.title')}</ThemedText>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>{t('onboarding.debtAdding')}</ThemedText>
+          <View style={[styles.debtHeaderContainer, isDark && styles.debtHeaderContainerDark]}>
+            <ThemedText style={[styles.debtTitle, isDark && styles.debtTitleDark]}>{t('onboarding.debtAddingTitle')}</ThemedText>
+            <ThemedText style={[styles.debtSubtitle, isDark && styles.debtSubtitleDark]}>{t('onboarding.debtAddingSubtitle')}</ThemedText>
+          </View>
 
           <View style={styles.inputRow}>
             <TextInput
@@ -207,6 +210,35 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 20,
+  },
+  debtHeaderContainer: {
+    backgroundColor: "#E6FFFA",
+    borderRadius: 12,
+    padding: isSmallDevice ? 14 : 16,
+    marginBottom: 16,
+  },
+  debtHeaderContainerDark: {
+    backgroundColor: "#234E52",
+  },
+  debtTitle: {
+    fontSize: isSmallDevice ? 16 : 18,
+    fontWeight: "700",
+    marginBottom: 6,
+    color: "#2D3748",
+    textAlign: "center",
+  },
+  debtTitleDark: {
+    color: "#E6FFFA",
+  },
+  debtSubtitle: {
+    fontSize: isSmallDevice ? 13 : 14,
+    fontWeight: "500",
+    color: "#4A5568",
+    textAlign: "center",
+    opacity: 0.9,
+  },
+  debtSubtitleDark: {
+    color: "#B2D4D7",
   },
   sectionTitle: {
     fontSize: isSmallDevice ? 15 : 16,

@@ -6,7 +6,8 @@
     "onboarding": {
         "title": "🕌 متتبع الصلاة",
         "prayerStart": "📅 تاريخ بدء الصلاة",
-        "debtAdding": "📋 إضافة دين",
+        "debtAddingTitle": "🤲 لنحسب الصلوات الفائتة",
+        "debtAddingSubtitle": "ما هي المدة التقريبية؟",
         "yearsAgoPlaceholder": "منذ كم سنة؟",
         "debtYearsAgoPlaceholder": "منذ كم سنة؟",
         "or": "أو",
