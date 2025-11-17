@@ -10,7 +10,6 @@ interface PrayerCounts {
 }
 
 interface StoredData {
-  startDate: string;
   debtDate: string;
   currentDebts: PrayerCounts;
   voluntaryPrayers: PrayerCounts;

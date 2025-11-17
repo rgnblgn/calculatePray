@@ -19,7 +19,7 @@ const isSmallDevice = width < 375;
 const isWeb = Platform.OS === "web";
 
 interface OnboardingScreenProps {
-  onComplete: (startDate: Date, debtDate: Date) => void;
+  onComplete: (debtDate: Date) => void;
 }
 
 const formatDate = (date: Date) => {
@@ -41,28 +41,11 @@ export default function OnboardingScreen({
 }: OnboardingScreenProps) {
   const { t } = useTranslation();
   const { language } = useLanguage(); // Dil değişikliğini dinlemek için
-  const [startDate, setStartDate] = useState<Date>(new Date());
   const [debtDate, setDebtDate] = useState<Date>(new Date());
-  const [showStartPicker, setShowStartPicker] = useState(false);
   const [showDebtPicker, setShowDebtPicker] = useState(false);
-  const [startYearsAgo, setStartYearsAgo] = useState<string>("");
   const [debtYearsAgo, setDebtYearsAgo] = useState<string>("");
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-
-  const handleStartYearsAgoChange = (text: string) => {
-    // Sadece sayı girişine izin ver
-    const numericValue = text.replace(/[^0-9]/g, "");
-    setStartYearsAgo(numericValue);
-
-    if (numericValue && parseInt(numericValue) > 0) {
-      const years = parseInt(numericValue);
-      const today = new Date();
-      const pastDate = new Date(today);
-      pastDate.setFullYear(today.getFullYear() - years);
-      setStartDate(pastDate);
-    }
-  };
 
   const handleDebtYearsAgoChange = (text: string) => {
     // Sadece sayı girişine izin ver
@@ -78,28 +61,12 @@ export default function OnboardingScreen({
     }
   };
 
-  const handleStartDateChange = (event: any, selectedDate?: Date) => {
-    if (Platform.OS === "android") {
-      setShowStartPicker(false);
-    }
-    if (selectedDate) {
-      setStartDate(selectedDate);
-    }
-  };
-
   const handleDebtDateChange = (event: any, selectedDate?: Date) => {
     if (Platform.OS === "android") {
       setShowDebtPicker(false);
     }
     if (selectedDate) {
       setDebtDate(selectedDate);
-    }
-  };
-
-  const handleWebStartDateChange = (dateString: string) => {
-    const date = new Date(dateString);
-    if (!isNaN(date.getTime())) {
-      setStartDate(date);
     }
   };
 
@@ -114,100 +81,6 @@ export default function OnboardingScreen({
     <ThemedView style={styles.container}>
       <View style={styles.content}>
         <ThemedText style={styles.title}>{t('onboarding.title')}</ThemedText>
-
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>{t('onboarding.prayerStart')}</ThemedText>
-
-          <View style={styles.inputRow}>
-            <TextInput
-              style={[styles.yearsInput, isDark && styles.yearsInputDark]}
-              placeholder={t('onboarding.yearsAgoPlaceholder')}
-              placeholderTextColor={isDark ? "#A0AEC0" : "#718096"}
-              keyboardType="numeric"
-              value={startYearsAgo}
-              onChangeText={handleStartYearsAgoChange}
-              maxLength={2}
-            />
-            <ThemedText style={styles.orDivider}>{t('onboarding.or')}</ThemedText>
-          </View>
-
-          {isWeb ? (
-            <div style={{ position: "relative" }}>
-              <input
-                className="custom-date-input"
-                style={{
-                  backgroundColor: isDark ? "#38B2AC" : "#4FD1C5",
-                  padding: isSmallDevice ? "12px" : "14px",
-                  borderRadius: "10px",
-                  border: "none",
-                  color: "#FFFFFF",
-                  fontSize: isSmallDevice ? "15px" : "16px",
-                  fontWeight: "600",
-                  textAlign: "center",
-                  width: "100%",
-                  cursor: "pointer",
-                  boxSizing: "border-box",
-                  outline: "none",
-                  fontFamily: "system-ui, -apple-system, sans-serif",
-                }}
-                value={formatDateForInput(startDate)}
-                onChange={(e: any) => handleWebStartDateChange(e.target.value)}
-                type="date"
-                max={formatDateForInput(new Date())}
-              />
-              <style>{`
-                                .custom-date-input::-webkit-calendar-picker-indicator {
-                                    filter: invert(1);
-                                    cursor: pointer;
-                                    font-size: 16px;
-                                }
-                                .custom-date-input::-webkit-datetime-edit {
-                                    color: white;
-                                }
-                                .custom-date-input::-webkit-datetime-edit-fields-wrapper {
-                                    color: white;
-                                }
-                                .custom-date-input::-webkit-datetime-edit-text {
-                                    color: white;
-                                    padding: 0 0.3em;
-                                }
-                                .custom-date-input::-webkit-datetime-edit-month-field {
-                                    color: white;
-                                }
-                                .custom-date-input::-webkit-datetime-edit-day-field {
-                                    color: white;
-                                }
-                                .custom-date-input::-webkit-datetime-edit-year-field {
-                                    color: white;
-                                }
-                                .custom-date-input:hover {
-                                    opacity: 0.9;
-                                }
-                            `}</style>
-            </div>
-          ) : (
-            <>
-              <TouchableOpacity
-                style={[styles.dateButton, isDark && styles.dateButtonDark]}
-                onPress={() => setShowStartPicker(true)}
-                activeOpacity={0.7}
-              >
-                <ThemedText style={styles.dateText}>
-                  {formatDate(startDate)}
-                </ThemedText>
-              </TouchableOpacity>
-              {showStartPicker && (
-                <DateTimePicker
-                  value={startDate}
-                  mode="date"
-                  display={Platform.OS === "ios" ? "spinner" : "default"}
-                  onChange={handleStartDateChange}
-                  maximumDate={new Date()}
-                />
-              )}
-            </>
-          )}
-        </View>
 
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>{t('onboarding.debtAdding')}</ThemedText>
@@ -305,7 +178,7 @@ export default function OnboardingScreen({
 
         <TouchableOpacity
           style={styles.submitButton}
-          onPress={() => onComplete(startDate, debtDate)}
+          onPress={() => onComplete(debtDate)}
           activeOpacity={0.8}
         >
           <ThemedText style={styles.submitButtonText}>{t('onboarding.continue')}</ThemedText>

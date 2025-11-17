@@ -22,7 +22,6 @@ const { width } = Dimensions.get("window");
 const isSmallDevice = width < 375;
 
 interface MainScreenProps {
-    startDate: Date;
     debtDate: Date;
     onReset?: () => void;
 }
@@ -36,7 +35,6 @@ interface PrayerCounts {
 }
 
 export default function MainScreen({
-    startDate,
     debtDate,
     onReset,
 }: MainScreenProps) {
@@ -53,14 +51,15 @@ export default function MainScreen({
         { key: "yatsi", name: t('mainScreen.prayers.isha'), icon: "🌙" },
     ];
 
-    // Tarihler arası gün farkını hesapla
-    const calculateDaysDifference = (date1: Date, date2: Date): number => {
+    // Borç tarihinden bugüne kadar geçen gün sayısını hesapla
+    const calculateDaysFromDebtDate = (debtDate: Date): number => {
+        const today = new Date();
         const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
-        const diffTime = Math.abs(date2.getTime() - date1.getTime());
+        const diffTime = Math.abs(today.getTime() - debtDate.getTime());
         return Math.floor(diffTime / oneDay);
     };
 
-    const daysDifference = calculateDaysDifference(startDate, debtDate);
+    const daysDifference = calculateDaysFromDebtDate(debtDate);
 
     // Hangi section açık?
     const [openSection, setOpenSection] = useState<
@@ -194,13 +193,12 @@ export default function MainScreen({
 
     const saveCurrentData = useCallback(async () => {
         await saveData({
-            startDate: startDate.toISOString(),
             debtDate: debtDate.toISOString(),
             currentDebts,
             voluntaryPrayers,
             paidDebts,
         });
-    }, [startDate, debtDate, currentDebts, voluntaryPrayers, paidDebts]);
+    }, [debtDate, currentDebts, voluntaryPrayers, paidDebts]);
 
     // Counter değişikliklerini otomatik kaydet
     useEffect(() => {
@@ -298,7 +296,6 @@ export default function MainScreen({
 
         // Storage'a kaydet
         await saveData({
-            startDate: startDate.toISOString(),
             debtDate: debtDate.toISOString(),
             currentDebts,
             voluntaryPrayers: {

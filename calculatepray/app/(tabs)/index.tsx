@@ -7,7 +7,6 @@ import { loadData, saveData } from '@/utils/storage';
 export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [isOnboarded, setIsOnboarded] = useState(false);
-  const [startDate, setStartDate] = useState<Date>(new Date());
   const [debtDate, setDebtDate] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -17,25 +16,17 @@ export default function HomeScreen() {
   const checkStoredData = async () => {
     const storedData = await loadData();
     if (storedData) {
-      setStartDate(new Date(storedData.startDate));
       setDebtDate(new Date(storedData.debtDate));
       setIsOnboarded(true);
     }
     setIsLoading(false);
   };
 
-  const handleOnboardingComplete = async (selectedStartDate: Date, selectedDebtDate: Date) => {
-    setStartDate(selectedStartDate);
+  const handleOnboardingComplete = async (selectedDebtDate: Date) => {
     setDebtDate(selectedDebtDate);
 
-    // Tarihler arası gün farkını hesapla
-    const oneDay = 24 * 60 * 60 * 1000;
-    const diffTime = Math.abs(selectedDebtDate.getTime() - selectedStartDate.getTime());
-    const daysDifference = Math.floor(diffTime / oneDay);
-
-    // İlk kayıt: tarihleri ve başlangıç değerlerini kaydet
+    // İlk kayıt: tarihi ve başlangıç değerlerini kaydet
     await saveData({
-      startDate: selectedStartDate.toISOString(),
       debtDate: selectedDebtDate.toISOString(),
       currentDebts: {
         sabah: 0,
@@ -44,12 +35,19 @@ export default function HomeScreen() {
         aksam: 0,
         yatsi: 0,
       },
-      pastDebts: {
-        sabah: daysDifference,
-        ogle: daysDifference,
-        ikindi: daysDifference,
-        aksam: daysDifference,
-        yatsi: daysDifference,
+      voluntaryPrayers: {
+        sabah: 0,
+        ogle: 0,
+        ikindi: 0,
+        aksam: 0,
+        yatsi: 0,
+      },
+      paidDebts: {
+        sabah: 0,
+        ogle: 0,
+        ikindi: 0,
+        aksam: 0,
+        yatsi: 0,
       },
     });
 
@@ -72,7 +70,7 @@ export default function HomeScreen() {
     return <OnboardingScreen onComplete={handleOnboardingComplete} />;
   }
 
-  return <MainScreen startDate={startDate} debtDate={debtDate} onReset={handleReset} />;
+  return <MainScreen debtDate={debtDate} onReset={handleReset} />;
 }
 
 const styles = StyleSheet.create({
