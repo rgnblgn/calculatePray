@@ -16,6 +16,32 @@
         "prayer": "Prayer",
         "fasting": "Fasting"
     },
+    "mainScreen": {
+        "title": "🕌 Prayer Tracker",
+        "subtitle": "Manage your missed prayers easily",
+        "newDate": "Enter New Date",
+        "currentDebts": "📊 Current Debts • Total:",
+        "voluntaryPrayers": "🌟 Voluntary Prayers • Total:",
+        "pastDebts": "📋 Past Debts Details",
+        "showDetails": "Show Details",
+        "hideDetails": "Hide Details",
+        "voluntaryNote": "Voluntary prayers are not included in total debt count. These are extra prayers you perform.",
+        "save": "Save Changes",
+        "dailyVerse": "Daily Verse",
+        "prayers": {
+            "fajr": "Fajr",
+            "dhuhr": "Dhuhr",
+            "asr": "Asr",
+            "maghrib": "Maghrib",
+            "isha": "Isha"
+        }
+    },
+    "settings": {
+        "changeLanguage": "Change Language",
+        "changeLanguageConfirm": "Do you want to change the language?",
+        "cancel": "Cancel",
+        "change": "Change"
+    },
     "common": {
         "save": "Save",
         "cancel": "Cancel",

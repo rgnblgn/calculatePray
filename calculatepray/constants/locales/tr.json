@@ -16,6 +16,32 @@
         "prayer": "Namaz",
         "fasting": "Oruç"
     },
+    "mainScreen": {
+        "title": "🕌 Namaz Takip",
+        "subtitle": "Kaza namazlarınızı kolayca yönetin",
+        "newDate": "Yeni Tarih Gir",
+        "currentDebts": "📊 Güncel Kazalar • Toplam:",
+        "voluntaryPrayers": "🌟 Nafile Namazlar • Toplam:",
+        "pastDebts": "📋 Geçmiş Borçlar Detayları",
+        "showDetails": "Detayları Göster",
+        "hideDetails": "Detayları Gizle",
+        "voluntaryNote": "Nafile namazlar toplam borç sayısına dahil edilmez. Bunlar kılmış olduğunuz ekstra namazlardır.",
+        "save": "Değişiklikleri Kaydet",
+        "dailyVerse": "Günün Ayeti",
+        "prayers": {
+            "fajr": "Sabah",
+            "dhuhr": "Öğle",
+            "asr": "İkindi",
+            "maghrib": "Akşam",
+            "isha": "Yatsı"
+        }
+    },
+    "settings": {
+        "changeLanguage": "Dil Değiştir",
+        "changeLanguageConfirm": "Dili değiştirmek istiyor musunuz?",
+        "cancel": "İptal",
+        "change": "Değiştir"
+    },
     "common": {
         "save": "Kaydet",
         "cancel": "İptal",

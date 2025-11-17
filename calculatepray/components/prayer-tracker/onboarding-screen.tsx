@@ -9,6 +9,7 @@ import {
   TextInput,
 } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -39,6 +40,7 @@ export default function OnboardingScreen({
   onComplete,
 }: OnboardingScreenProps) {
   const { t } = useTranslation();
+  const { language } = useLanguage(); // Dil değişikliğini dinlemek için
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [debtDate, setDebtDate] = useState<Date>(new Date());
   const [showStartPicker, setShowStartPicker] = useState(false);

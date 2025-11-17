@@ -6,7 +6,7 @@ import en from '@/constants/locales/en.json';
 import tr from '@/constants/locales/tr.json';
 import ar from '@/constants/locales/ar.json';
 
-const LANGUAGE_KEY = '@app_language';
+export const LANGUAGE_KEY = '@app_language';
 
 const resources = {
     en: { translation: en },
@@ -14,29 +14,26 @@ const resources = {
     ar: { translation: ar },
 };
 
-const initI18n = async () => {
-    let savedLanguage = 'tr'; // Varsayılan dil
+// i18n'i senkron olarak başlat
+i18n.use(initReactI18next).init({
+    resources,
+    lng: 'tr', // Varsayılan dil
+    fallbackLng: 'en',
+    compatibilityJSON: 'v4',
+    interpolation: {
+        escapeValue: false,
+    },
+});
 
+export const initI18n = async () => {
     try {
         const storedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
         if (storedLanguage) {
-            savedLanguage = storedLanguage;
+            await i18n.changeLanguage(storedLanguage);
         }
     } catch (error) {
         console.log('Error loading language:', error);
     }
-
-    i18n
-        .use(initReactI18next)
-        .init({
-            resources,
-            lng: savedLanguage,
-            fallbackLng: 'en',
-            compatibilityJSON: 'v4',
-            interpolation: {
-                escapeValue: false,
-            },
-        });
 };
 
 export const changeLanguage = async (language: string) => {
@@ -65,6 +62,12 @@ export const setStoredLanguage = async (language: string): Promise<void> => {
     }
 };
 
-initI18n();
+export const clearStoredLanguage = async (): Promise<void> => {
+    try {
+        await AsyncStorage.removeItem(LANGUAGE_KEY);
+    } catch (error) {
+        console.log('Error clearing language:', error);
+    }
+};
 
 export default i18n;
