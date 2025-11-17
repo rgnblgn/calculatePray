@@ -103,11 +103,23 @@ export default function MainScreen({
     // Storage'dan verileri yükle (ilk açılışta)
     useEffect(() => {
         loadInitialData();
-        fetchQuranData();
     }, []);
+
+    // Dil değiştiğinde ayeti yeniden yükle
+    useEffect(() => {
+        fetchQuranData();
+    }, [language]);
 
     const fetchQuranData = async () => {
         try {
+            // Dil ayarına göre çeviri seç
+            const translationMap: { [key: string]: string } = {
+                'tr': 'tr.diyanet',
+                'en': 'en.asad',
+                'ar': 'ar.alafasy',
+            };
+            const translation = translationMap[language] || 'tr.diyanet';
+
             let selectedAyah = null;
             let attempts = 0;
             const maxAttempts = 20; // Sonsuz döngüye girmemek için limit
@@ -128,7 +140,7 @@ export default function MainScreen({
 
                 // O sureyi çek
                 const surahResponse = await fetch(
-                    `http://api.alquran.cloud/v1/surah/${randomSurahNumber}/tr.diyanet`
+                    `http://api.alquran.cloud/v1/surah/${randomSurahNumber}/${translation}`
                 );
                 const surahData = await surahResponse.json();
 
