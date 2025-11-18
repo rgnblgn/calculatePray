@@ -4,7 +4,7 @@
     "slug": "calculatepray",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/namazIcon.png",
     "scheme": "calculatepray",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -31,9 +31,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
+          "image": "./assets/images/splash.png",
+          "resizeMode": "cover",
           "backgroundColor": "#ffffff",
           "dark": {
             "backgroundColor": "#000000"
