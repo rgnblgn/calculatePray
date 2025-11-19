@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "calculatepray",
+    "name": "Namaz Takip",
     "slug": "calculatepray",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,11 +12,10 @@
       "supportsTablet": true
     },
     "android": {
+      "icon": "./assets/images/namazIcon.png",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/namazIcon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -25,6 +24,11 @@
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
+    },
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
     },
     "plugins": [
       "expo-router",
