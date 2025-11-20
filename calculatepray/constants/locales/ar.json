@@ -10,8 +10,14 @@
         "debtAddingSubtitle": "ما هي المدة التقريبية؟",
         "yearsAgoPlaceholder": "منذ كم سنة؟",
         "debtYearsAgoPlaceholder": "منذ كم سنة؟",
+        "amountPlaceholder": "أدخل المبلغ",
         "or": "أو",
-        "continue": "استمر ✓"
+        "continue": "استمر ✓",
+        "units": {
+            "day": "يوم",
+            "month": "شهر",
+            "year": "سنة"
+        }
     },
     "tabs": {
         "prayer": "الصلاة",

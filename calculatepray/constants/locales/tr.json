@@ -10,8 +10,14 @@
         "debtAddingSubtitle": "Tahmini olarak ne kadar süre eksik?",
         "yearsAgoPlaceholder": "Kaç yıl önce?",
         "debtYearsAgoPlaceholder": "Kaç yıl öncesinden?",
+        "amountPlaceholder": "Süre girin",
         "or": "veya",
-        "continue": "Devam Et ✓"
+        "continue": "Devam Et ✓",
+        "units": {
+            "day": "Gün",
+            "month": "Ay",
+            "year": "Yıl"
+        }
     },
     "tabs": {
         "prayer": "Namaz",

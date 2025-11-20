@@ -10,8 +10,14 @@
         "debtAddingSubtitle": "Approximately how long ago?",
         "yearsAgoPlaceholder": "How many years ago?",
         "debtYearsAgoPlaceholder": "How many years ago?",
+        "amountPlaceholder": "Enter amount",
         "or": "or",
-        "continue": "Continue ✓"
+        "continue": "Continue ✓",
+        "units": {
+            "day": "Day",
+            "month": "Month",
+            "year": "Year"
+        }
     },
     "tabs": {
         "prayer": "Prayer",
