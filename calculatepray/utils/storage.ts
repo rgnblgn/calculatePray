@@ -56,7 +56,6 @@ export const loadData = async (): Promise<StoredData | null> => {
     const jsonValue = await storage.getItem(STORAGE_KEY);
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   } catch (e) {
-    console.error("Error loading data:", e);
     return null;
   }
 };

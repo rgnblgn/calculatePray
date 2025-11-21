@@ -24,7 +24,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
         // i18n languageChanged event'ini dinle
         const handleLanguageChange = (lng: string) => {
-            console.log('i18n language changed event:', lng);
             setLanguageState(lng);
             setI18nReady(false);
             // Küçük bir gecikme ile i18n'in hazır olduğunu işaretle
@@ -42,24 +41,20 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     const loadLanguage = async () => {
         try {
-            console.log('Loading language...');
             // i18n'i başlat
             await initI18n();
 
             const storedLang = await getStoredLanguage();
-            console.log('Stored language:', storedLang);
 
             if (storedLang) {
                 setLanguageState(storedLang);
                 setIsLanguageSelected(true);
                 await i18nInstance.changeLanguage(storedLang);
-                console.log('Language changed to:', storedLang, 'Current i18n language:', i18nInstance.language);
             } else {
                 setIsLanguageSelected(false);
             }
             setI18nReady(true);
         } catch (error) {
-            console.log('Error loading language:', error);
             setIsLanguageSelected(false);
             setI18nReady(true);
         } finally {
@@ -68,11 +63,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     const setLanguage = async (lang: string) => {
-        console.log('setLanguage called with:', lang);
         setI18nReady(false);
         await setStoredLanguage(lang);
         await i18nInstance.changeLanguage(lang);
-        console.log('After changeLanguage, i18n language is:', i18nInstance.language);
         setLanguageState(lang);
         setIsLanguageSelected(true);
         // Küçük gecikme ile state'i güncelle
@@ -82,7 +75,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
 
     const resetLanguage = async () => {
-        console.log('Resetting language...');
         await clearStoredLanguage();
         setIsLanguageSelected(false);
         setI18nReady(false);
