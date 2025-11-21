@@ -35,6 +35,11 @@
         "voluntaryNote": "Voluntary prayers are not included in total debt count. These are extra prayers you perform.",
         "save": "Save Changes",
         "dailyVerse": "Daily Verse",
+        "remainingDebt": "You have approximately {{days}} days of debt.",
+        "noDebt": "Congratulations! No debt remaining! 🎉",
+        "prayerAccepted": "May Allah accept your prayers. 🤲",
+        "remainingByPrayer": "Remaining Debts by Prayer Time:",
+        "pieces": "pieces",
         "prayers": {
             "fajr": "Fajr",
             "dhuhr": "Dhuhr",
@@ -54,5 +59,14 @@
         "cancel": "Cancel",
         "yes": "Yes",
         "no": "No"
+    },
+    "fastingScreen": {
+        "title": "🌙 Fasting Tracker",
+        "subtitle": "Manage your missed fasts easily",
+        "debtLabel": "Missed Fasting Debt",
+        "debtInfo": "🎯 You have {{days}} days of fasting debt",
+        "noDebt": "✅ You have no fasting debt!",
+        "tipsTitle": "💡 Information",
+        "tipsText": "• Press (-) button for each completed fast\n• Press (+) button when new debt occurs\n• Your data is saved automatically"
     }
 }

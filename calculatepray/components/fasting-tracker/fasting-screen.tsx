@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,6 +17,7 @@ const { width } = Dimensions.get("window");
 const isSmallDevice = width < 375;
 
 export default function FastingScreen() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -42,6 +44,7 @@ export default function FastingScreen() {
       return;
     }
     saveCurrentData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fastingDebt]);
 
   const saveCurrentData = async () => {
@@ -73,10 +76,10 @@ export default function FastingScreen() {
       <View style={styles.content}>
         <View style={styles.header}>
           <ThemedText type="title" style={styles.title}>
-            🌙 Oruç Takip
+            {t("fastingScreen.title")}
           </ThemedText>
           <ThemedText style={styles.subtitle}>
-            Kaza oruçlarınızı kolayca yönetin
+            {t("fastingScreen.subtitle")}
           </ThemedText>
         </View>
 
@@ -86,7 +89,7 @@ export default function FastingScreen() {
           </View>
 
           <ThemedText style={[styles.label, isDark && styles.labelDark]}>
-            Kaza Orucu Borcu
+            {t("fastingScreen.debtLabel")}
           </ThemedText>
 
           <View style={styles.counterContainer}>
@@ -124,13 +127,13 @@ export default function FastingScreen() {
             <ThemedText
               style={[styles.infoText, isDark && styles.infoTextDark]}
             >
-              🎯 {fastingDebt} gün oruç borcunuz var
+              {t("fastingScreen.debtInfo", { days: fastingDebt })}
             </ThemedText>
           )}
 
           {fastingDebt === 0 && (
             <ThemedText style={[styles.infoText, styles.successText]}>
-              ✅ Hiç oruç borcunuz yok!
+              {t("fastingScreen.noDebt")}
             </ThemedText>
           )}
         </ThemedView>
@@ -139,12 +142,10 @@ export default function FastingScreen() {
           <ThemedText
             style={[styles.tipsTitle, isDark && styles.tipsTitleDark]}
           >
-            💡 Bilgi
+            {t("fastingScreen.tipsTitle")}
           </ThemedText>
           <ThemedText style={[styles.tipsText, isDark && styles.tipsTextDark]}>
-            • Her tuttuğunuz kaza orucunda (-) butonuna basın{"\n"}• Yeni borç
-            oluştuğunda (+) butonuna basın{"\n"}• Verileriniz otomatik olarak
-            kaydedilir
+            {t("fastingScreen.tipsText")}
           </ThemedText>
         </View>
       </View>

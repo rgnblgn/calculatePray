@@ -352,7 +352,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
   // Her vakitten kaç namaz borcu kaldığını hesapla (paidDebts dahil)
   const getDebtDetailsByPrayer = () => {
     const prayerOrder = ["sabah", "ogle", "ikindi", "aksam", "yatsi"] as const;
-    const prayerDisplayNames = ["Sabah", "Öğle", "İkindi", "Akşam", "Yatsı"];
+    const prayerKeys = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
     const prayerIcons = ["🌅", "☀️", "🌤️", "🌆", "🌙"];
 
     return prayerOrder.map((key, index) => {
@@ -362,7 +362,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
 
       return {
         key,
-        name: prayerDisplayNames[index],
+        name: t(`mainScreen.prayers.${prayerKeys[index]}`),
         icon: prayerIcons[index],
         remaining,
       };
@@ -577,10 +577,10 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                       ]}
                     >
                       {remainingDays > 0
-                        ? `Yaklaşık ${remainingDays} gün borcunuz var.`
-                        : "Tebrikler! Borcunuz kalmadı! 🎉"}
+                        ? t("mainScreen.remainingDebt", { days: remainingDays })
+                        : t("mainScreen.noDebt")}
                       {"\n"}
-                      Allah namazlarınızı kabul etsin. 🤲
+                      {t("mainScreen.prayerAccepted")}
                     </ThemedText>
                   </View>
 
@@ -625,7 +625,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                           isDark && styles.debtDetailsTitleDark,
                         ]}
                       >
-                        Vakit Bazında Kalan Borçlar:
+                        {t("mainScreen.remainingByPrayer")}
                       </ThemedText>
                       {debtDetails.map(
                         (detail) =>
@@ -654,7 +654,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                                   isDark && styles.debtDetailCountDark,
                                 ]}
                               >
-                                {detail.remaining} adet
+                                {detail.remaining} {t("mainScreen.pieces")}
                               </ThemedText>
                             </View>
                           )

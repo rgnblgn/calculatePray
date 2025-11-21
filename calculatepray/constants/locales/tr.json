@@ -35,6 +35,11 @@
         "voluntaryNote": "Nafile namazlar toplam borç sayısına dahil edilmez. Bunlar kılmış olduğunuz ekstra namazlardır.",
         "save": "Değişiklikleri Kaydet",
         "dailyVerse": "Günün Ayeti",
+        "remainingDebt": "Yaklaşık {{days}} gün borcunuz var.",
+        "noDebt": "Tebrikler! Borcunuz kalmadı! 🎉",
+        "prayerAccepted": "Allah namazlarınızı kabul etsin. 🤲",
+        "remainingByPrayer": "Vakit Bazında Kalan Borçlar:",
+        "pieces": "adet",
         "prayers": {
             "fajr": "Sabah",
             "dhuhr": "Öğle",
@@ -54,5 +59,14 @@
         "cancel": "İptal",
         "yes": "Evet",
         "no": "Hayır"
+    },
+    "fastingScreen": {
+        "title": "🌙 Oruç Takip",
+        "subtitle": "Kaza oruçlarınızı kolayca yönetin",
+        "debtLabel": "Kaza Orucu Borcu",
+        "debtInfo": "🎯 {{days}} gün oruç borcunuz var",
+        "noDebt": "✅ Hiç oruç borcunuz yok!",
+        "tipsTitle": "💡 Bilgi",
+        "tipsText": "• Her tuttuğunuz kaza orucunda (-) butonuna basın\n• Yeni borç oluştuğunda (+) butonuna basın\n• Verileriniz otomatik olarak kaydedilir"
     }
 }
