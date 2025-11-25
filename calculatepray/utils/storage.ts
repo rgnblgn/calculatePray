@@ -14,6 +14,7 @@ interface StoredData {
   currentDebts: PrayerCounts;
   voluntaryPrayers: PrayerCounts;
   paidDebts: PrayerCounts; // Nafile namazlarla ödenmiş borçlar (vakit bazında)
+  totalVoluntaryPrayed?: number; // Toplam kılınan nafile namazlar
   fastingDebt?: number;
 }
 
