@@ -2,7 +2,7 @@
   "expo": {
     "name": "Namaz Takip",
     "slug": "calculatepray",
-    "version": "1.0.0",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/images/namazIcon.png",
     "scheme": "calculatepray",
@@ -17,6 +17,7 @@
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 5,
       "icon": "./assets/images/namazIcon.png",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
