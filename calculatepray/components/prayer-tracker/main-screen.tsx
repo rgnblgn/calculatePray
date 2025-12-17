@@ -133,29 +133,40 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
             ) {
                 attempts++;
 
-                // Random sure numarası seç (1 ile 114 arası)
-                const randomSurahNumber = Math.floor(Math.random() * 114) + 1;
-                selectedSurahNumber = randomSurahNumber;
+                try {
+                    // Random sure numarası seç (1 ile 114 arası)
+                    const randomSurahNumber = Math.floor(Math.random() * 114) + 1;
+                    selectedSurahNumber = randomSurahNumber;
 
-                // O sureyi çek
-                const surahResponse = await fetch(
-                    `https://api.alquran.cloud/v1/surah/${randomSurahNumber}/${translation}`
-                );
-                const surahData = await surahResponse.json();
+                    // O sureyi çek
+                    const surahResponse = await fetch(
+                        `https://api.alquran.cloud/v1/surah/${randomSurahNumber}/${translation}`
+                    );
 
-                if (surahData.code === 200 && surahData.data && surahData.data.ayahs) {
-                    const ayahs = surahData.data.ayahs;
-                    const numberOfAyahs = ayahs.length;
-                    const surahName = surahData.data.name;
+                    if (!surahResponse.ok) {
+                        console.error(`API Error: ${surahResponse.status}`);
+                        continue;
+                    }
 
-                    // Random ayet numarası seç (2 ile numberOfAyahs arası, index için -1)
-                    const randomAyahIndex =
-                        Math.floor(Math.random() * (numberOfAyahs - 1)) + 1;
+                    const surahData = await surahResponse.json();
 
-                    selectedAyah = {
-                        ...ayahs[randomAyahIndex],
-                        surahName: surahName,
-                    };
+                    if (surahData.code === 200 && surahData.data && surahData.data.ayahs) {
+                        const ayahs = surahData.data.ayahs;
+                        const numberOfAyahs = ayahs.length;
+                        const surahName = surahData.data.name;
+
+                        // Random ayet numarası seç (2 ile numberOfAyahs arası, index için -1)
+                        const randomAyahIndex =
+                            Math.floor(Math.random() * (numberOfAyahs - 1)) + 1;
+
+                        selectedAyah = {
+                            ...ayahs[randomAyahIndex],
+                            surahName: surahName,
+                        };
+                    }
+                } catch (innerError) {
+                    console.error(`Error in attempt ${attempts}:`, innerError);
+                    continue;
                 }
             }
 
@@ -218,7 +229,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
         if (Platform.OS === "web") {
             // Web için confirm kullan
             const confirmed = window.confirm(
-                "⚠️ Emin Misiniz?\n\nTüm veriler silinecek ve yeni tarih girişi yapmanız gerekecek. Devam etmek istiyor musunuz?"
+                `${t('mainScreen.resetConfirmTitle')}\n\n${t('mainScreen.resetConfirmMessage')}`
             );
             if (confirmed) {
                 clearData().then(() => {
@@ -230,11 +241,11 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
         } else {
             // Mobil için Alert kullan
             Alert.alert(
-                "⚠️ Emin Misiniz?",
-                "Tüm veriler silinecek ve yeni tarih girişi yapmanız gerekecek. Devam etmek istiyor musunuz?",
+                t('mainScreen.resetConfirmTitle'),
+                t('mainScreen.resetConfirmMessage'),
                 [
                     {
-                        text: "İptal",
+                        text: t('mainScreen.resetCancel'),
                         style: "cancel",
                         onPress: () =>
                             Haptics.notificationAsync(
@@ -242,7 +253,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                             ),
                     },
                     {
-                        text: "Evet, Sil",
+                        text: t('mainScreen.resetConfirm'),
                         style: "destructive",
                         onPress: async () => {
                             await clearData();
@@ -279,7 +290,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
 
     const handleSaveVoluntaryPrayers = async () => {
         if (voluntaryTotal === 0) {
-            Alert.alert("Uyarı", "Kaydedilecek nafile namaz bulunmuyor.");
+            Alert.alert(t('mainScreen.emptyVoluntaryWarning'), t('mainScreen.emptyVoluntaryMessage'));
             return;
         }
 
@@ -315,8 +326,8 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
         // Başarı feedback'i
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         Alert.alert(
-            "✅ Kaydedildi",
-            `${voluntaryTotal} nafile namaz borçtan düşüldü. Allah kabul etsin! 🤲`
+            t('mainScreen.savedSuccessTitle'),
+            t('mainScreen.savedSuccessMessage', { count: voluntaryTotal })
         );
     };
 
@@ -342,7 +353,6 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
     // Her vakitten kaç namaz borcu kaldığını hesapla (sadece paidDebts)
     const getDebtDetailsByPrayer = () => {
         const prayerOrder = ["sabah", "ogle", "ikindi", "aksam", "yatsi"] as const;
-        const prayerDisplayNames = ["Sabah", "Öğle", "İkindi", "Akşam", "Yatsı"];
         const prayerIcons = ["🌅", "☀️", "🌤️", "🌆", "🌙"];
 
         return prayerOrder.map((key, index) => {
@@ -352,7 +362,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
 
             return {
                 key,
-                name: prayerDisplayNames[index],
+                name: t(`mainScreen.prayers.${["fajr", "dhuhr", "asr", "maghrib", "isha"][index]}`),
                 icon: prayerIcons[index],
                 remaining,
             };
@@ -567,10 +577,10 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                                             ]}
                                         >
                                             {remainingDays > 0
-                                                ? `Yaklaşık ${remainingDays} gün borcunuz var.`
-                                                : "Tebrikler! Borcunuz kalmadı! 🎉"}
+                                                ? t("mainScreen.remainingDebtText", { days: remainingDays })
+                                                : t("mainScreen.congratulations")}
                                             {"\n"}
-                                            Allah namazlarınızı kabul etsin. 🤲
+                                            {t("mainScreen.prayerAcceptedText")}
                                         </ThemedText>
                                     </View>
 
@@ -615,7 +625,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                                                     isDark && styles.debtDetailsTitleDark,
                                                 ]}
                                             >
-                                                Vakit Bazında Kalan Borçlar:
+                                                {t("mainScreen.debtByTime")}
                                             </ThemedText>
                                             {debtDetails.map(
                                                 (detail) =>
@@ -644,7 +654,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                                                                     isDark && styles.debtDetailCountDark,
                                                                 ]}
                                                             >
-                                                                {detail.remaining} adet
+                                                                {detail.remaining} {t("mainScreen.pieces")}
                                                             </ThemedText>
                                                         </View>
                                                     )
@@ -670,7 +680,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                                                                     isDark && styles.voluntaryTotalTextDark,
                                                                 ]}
                                                             >
-                                                                Toplam Kılınan
+                                                                {t("mainScreen.totalVoluntaryLine1")}
                                                             </ThemedText>
                                                             <ThemedText
                                                                 style={[
@@ -678,7 +688,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                                                                     isDark && styles.voluntaryTotalTextDark,
                                                                 ]}
                                                             >
-                                                                Nafile Namaz
+                                                                {t("mainScreen.totalVoluntaryLine2")}
                                                             </ThemedText>
                                                         </View>
                                                         <ThemedText
@@ -687,7 +697,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                                                                 isDark && styles.voluntaryTotalCountDark,
                                                             ]}
                                                         >
-                                                            {totalVoluntaryPrayed} vakit
+                                                            {totalVoluntaryPrayed} {t("mainScreen.timesUnit")}
                                                         </ThemedText>
                                                     </View>
                                                 </>
@@ -711,7 +721,7 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                                                 style={styles.saveIcon}
                                             />
                                             <ThemedText style={styles.saveButtonText}>
-                                                Kaydet ve Borçtan Düş
+                                                {t('mainScreen.saveAndDeductButton')}
                                             </ThemedText>
                                         </TouchableOpacity>
                                     )}
