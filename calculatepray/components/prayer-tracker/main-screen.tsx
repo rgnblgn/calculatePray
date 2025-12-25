@@ -845,7 +845,7 @@ const styles = StyleSheet.create({
     section: {
         marginBottom: isSmallDevice ? 14 : 18,
         borderRadius: 20,
-        overflow: "visible",
+        overflow: "hidden",
     },
     sectionShadow: {
         shadowColor: "#4A5568",
@@ -856,9 +856,9 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         padding: isSmallDevice ? 8 : 12,
-        borderRadius: 18,
+        borderRadius: 0,
         backgroundColor: "#FFFFFF",
-        marginTop: 8,
+        marginTop: 0,
     },
     contentContainerDark: {
         backgroundColor: "#2A2520",
@@ -910,7 +910,6 @@ const styles = StyleSheet.create({
         fontSize: isSmallDevice ? 14 : 16,
         fontWeight: "600",
         letterSpacing: 0.2,
-        color: "#2D3748",
         flexShrink: 1,
     },
     counterContainer: {
@@ -958,7 +957,7 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     countDisplayDark: {
-        backgroundColor: "#8B7355",
+        backgroundColor: "#5A6B8A",
     },
     countText: {
         fontSize: isSmallDevice ? 15 : 17,

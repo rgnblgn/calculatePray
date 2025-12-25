@@ -138,7 +138,7 @@ export default function FastingScreen() {
           )}
         </ThemedView>
 
-        <View style={styles.tipsContainer}>
+        <View style={[styles.tipsContainer, isDark && styles.tipsContainerDark]}>
           <ThemedText
             style={[styles.tipsTitle, isDark && styles.tipsTitleDark]}
           >
@@ -303,6 +303,10 @@ const styles = StyleSheet.create({
     padding: isSmallDevice ? 16 : 20,
     borderLeftWidth: 4,
     borderLeftColor: "#B89968",
+  },
+  tipsContainerDark: {
+    backgroundColor: "#3A4556",
+    borderLeftColor: "#8B9A7E",
   },
   tipsTitle: {
     fontSize: isSmallDevice ? 16 : 17,

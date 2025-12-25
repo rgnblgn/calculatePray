@@ -75,16 +75,15 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   headingLight: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F9FA',
   },
   headingDark: {
-    backgroundColor: '#2D3748',
+    backgroundColor: '#3A4556',
   },
   headingText: {
     fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,
-    color: '#2D3748',
   },
   content: {
     marginTop: 10,
