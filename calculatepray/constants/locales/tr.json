@@ -74,7 +74,10 @@
         "save": "Kaydet",
         "cancel": "İptal",
         "yes": "Evet",
-        "no": "Hayır"
+        "no": "Hayır",
+        "share": "Paylaş",
+        "copy": "Kopyala",
+        "shareImage": "Görüntü Olarak Paylaş"
     },
     "fastingScreen": {
         "title": "🌙 Oruç Takip",

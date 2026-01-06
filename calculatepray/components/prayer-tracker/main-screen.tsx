@@ -18,6 +18,7 @@ import { Collapsible } from "@/components/ui/collapsible";
 import { Ionicons } from "@expo/vector-icons";
 import { loadData, saveData, clearData } from "@/utils/storage";
 import surahNames from "@/constants/surahs.json";
+import VerseCard from "@/components/prayer-tracker/verse-card";
 
 const { width } = Dimensions.get("window");
 const isSmallDevice = width < 375;
@@ -731,28 +732,38 @@ export default function MainScreen({ debtDate, onReset }: MainScreenProps) {
                     </View>
 
                     {dailyAyah && (
-                        <View
-                            style={[styles.ayahContainer, isDark && styles.ayahContainerDark]}
-                        >
-                            <View style={styles.ayahHeader}>
-                                <ThemedText style={styles.ayahTitle}>
-                                    📖 {t("mainScreen.dailyVerse")}
-                                </ThemedText>
-                                <ThemedText style={styles.ayahReference}>
-                                    {language === "ar"
-                                        ? dailyAyah.surah
-                                        : (surahNames as any)[dailyAyah.surahNumber.toString()][
-                                        language
-                                        ] || dailyAyah.surah}{" "}
-                                    - {dailyAyah.numberInSurah}
+                        <>
+                            <View
+                                style={[styles.ayahContainer, isDark && styles.ayahContainerDark]}
+                            >
+                                <View style={styles.ayahHeader}>
+                                    <ThemedText style={styles.ayahTitle}>
+                                        📖 {t("mainScreen.dailyVerse")}
+                                    </ThemedText>
+                                    <ThemedText style={styles.ayahReference}>
+                                        {language === "ar"
+                                            ? dailyAyah.surah
+                                            : (surahNames as any)[dailyAyah.surahNumber.toString()][
+                                            language
+                                            ] || dailyAyah.surah}{" "}
+                                        - {dailyAyah.numberInSurah}
+                                    </ThemedText>
+                                </View>
+                                <ThemedText
+                                    style={[styles.ayahText, isDark && styles.ayahTextDark]}
+                                >
+                                    {dailyAyah.text}
                                 </ThemedText>
                             </View>
-                            <ThemedText
-                                style={[styles.ayahText, isDark && styles.ayahTextDark]}
-                            >
-                                {dailyAyah.text}
-                            </ThemedText>
-                        </View>
+                            
+                            <VerseCard
+                                text={dailyAyah.text}
+                                surah={dailyAyah.surah}
+                                numberInSurah={dailyAyah.numberInSurah}
+                                surahNumber={dailyAyah.surahNumber}
+                                language={language}
+                            />
+                        </>
                     )}
                 </View>
             </ScrollView>

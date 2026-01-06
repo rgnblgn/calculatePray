@@ -74,7 +74,10 @@
         "save": "Save",
         "cancel": "Cancel",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "share": "Share",
+        "copy": "Copy",
+        "shareImage": "Share as Image"
     },
     "fastingScreen": {
         "title": "🌙 Fasting Tracker",
