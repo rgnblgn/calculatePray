@@ -62,8 +62,9 @@ export default function VerseCard({
   const generateWebImage = () => {
     try {
       const canvas = document.createElement("canvas");
+      // Instagram Story boyutları: 1080x1920
       canvas.width = 1080;
-      canvas.height = 1350;
+      canvas.height = 1920;
       const ctx = canvas.getContext("2d");
 
       if (!ctx) return;
@@ -77,39 +78,39 @@ export default function VerseCard({
 
       // Dekoratif çizgi üst
       ctx.strokeStyle = "#4FD1C5";
-      ctx.lineWidth = 8;
+      ctx.lineWidth = 12;
       ctx.beginPath();
-      ctx.moveTo(100, 80);
-      ctx.lineTo(980, 80);
+      ctx.moveTo(100, 120);
+      ctx.lineTo(980, 120);
       ctx.stroke();
 
       // Emoji
-      ctx.font = "120px Arial";
+      ctx.font = "160px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("📖", 540, 250);
+      ctx.fillText("📖", 540, 320);
 
       // Başlık
-      ctx.font = "bold 60px Arial";
+      ctx.font = "bold 80px Arial";
       ctx.fillStyle = "#2D3748";
-      ctx.fillText("Günün Ayeti", 540, 350);
+      ctx.fillText(t("mainScreen.dailyVerse"), 540, 450);
 
       // Dekoratif ayırıcı
       ctx.strokeStyle = "#8B7355";
-      ctx.lineWidth = 2;
-      ctx.setLineDash([10, 10]);
+      ctx.lineWidth = 3;
+      ctx.setLineDash([15, 15]);
       ctx.beginPath();
-      ctx.moveTo(150, 420);
-      ctx.lineTo(930, 420);
+      ctx.moveTo(150, 550);
+      ctx.lineTo(930, 550);
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Ayet metni (kaydırma ile)
-      ctx.font = "45px Georgia, serif";
-      ctx.fillStyle = "#2D3748";
+      // Ayet metni (kalın ve belirgin font)
+      ctx.font = "italic bold 50px 'Georgia', serif";
+      ctx.fillStyle = "#1A202C";
       ctx.textAlign = "center";
       const maxWidth = 900;
-      const lineHeight = 65;
-      let y = 530;
+      const lineHeight = 90;
+      let y = 680;
 
       const words = text.split(" ");
       let line = "";
@@ -133,32 +134,32 @@ export default function VerseCard({
 
       // Dekoratif ayırıcı alt
       ctx.strokeStyle = "#8B7355";
-      ctx.lineWidth = 2;
-      ctx.setLineDash([10, 10]);
+      ctx.lineWidth = 3;
+      ctx.setLineDash([15, 15]);
       ctx.beginPath();
-      ctx.moveTo(150, y + 100);
-      ctx.lineTo(930, y + 100);
+      ctx.moveTo(150, y + 120);
+      ctx.lineTo(930, y + 120);
       ctx.stroke();
       ctx.setLineDash([]);
 
       // Referans
-      ctx.font = "50px Arial";
+      ctx.font = "bold 60px Arial";
       ctx.fillStyle = "#8B7355";
       ctx.textAlign = "center";
-      ctx.fillText(`${surahDisplay} - ${numberInSurah}`, 540, y + 200);
+      ctx.fillText(`${surahDisplay} - ${numberInSurah}`, 540, y + 240);
 
       // Brand
-      ctx.font = "bold 40px Arial";
+      ctx.font = "bold 50px Arial";
       ctx.fillStyle = "#4FD1C5";
       ctx.textAlign = "center";
-      ctx.fillText("NamazTakip.com", 540, y + 280);
+      ctx.fillText(t("common.brandDomain"), 540, y + 330);
 
       // Dekoratif çizgi alt
       ctx.strokeStyle = "#4FD1C5";
-      ctx.lineWidth = 8;
+      ctx.lineWidth = 12;
       ctx.beginPath();
-      ctx.moveTo(100, y + 340);
-      ctx.lineTo(980, y + 340);
+      ctx.moveTo(100, y + 420);
+      ctx.lineTo(980, y + 420);
       ctx.stroke();
 
       // İndir
@@ -203,7 +204,9 @@ export default function VerseCard({
           <View style={styles.nativeCard}>
             <View style={styles.nativeCardContent}>
               <ThemedText style={styles.nativeEmoji}>📖</ThemedText>
-              <ThemedText style={styles.nativeTitle}>Günün Ayeti</ThemedText>
+              <ThemedText style={styles.nativeTitle}>
+                {t("mainScreen.dailyVerse")}
+              </ThemedText>
 
               <ScrollView
                 style={styles.nativeVerseContainer}
@@ -215,7 +218,9 @@ export default function VerseCard({
               <ThemedText style={styles.nativeReference}>
                 {surahDisplay} - {numberInSurah}
               </ThemedText>
-              <ThemedText style={styles.nativeBrand}>NamazTakip</ThemedText>
+              <ThemedText style={styles.nativeBrand}>
+                {t("common.brandName")}
+              </ThemedText>
             </View>
           </View>
         </ViewShot>

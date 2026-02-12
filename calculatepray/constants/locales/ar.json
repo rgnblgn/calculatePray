@@ -77,7 +77,9 @@
         "no": "لا",
         "share": "مشاركة",
         "copy": "نسخ",
-        "shareImage": "مشاركة كصورة"
+        "shareImage": "مشاركة كصورة",
+        "brandName": "متتبع الصلاة",
+        "brandDomain": "PrayerTracker.com"
     },
     "fastingScreen": {
         "title": "🌙 متتبع الصيام",
